@@ -38,8 +38,13 @@ int solucion(int argc, char* argv[])
 
 	struct imagen regArch;
 	struct imagen 
-
-
+	
+/*VALIDAR BMP DE 24 BITS*/
+	
+/*VALIDAR QUE NO ESTE COMPRIMIDA*/
+	
+/*VReservar memoria para la matriz que va a almacenar la imagen*/
+	
 	// ahora sigo voy a armar en visual
     return 0;
 }
