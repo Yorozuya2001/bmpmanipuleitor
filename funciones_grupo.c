@@ -48,7 +48,9 @@ int solucion(int argc, char* argv[])
 /*VALIDAR QUE NO ESTE COMPRIMIDA*/
 	
 /*VReservar memoria para la matriz que va a almacenar la imagen*/
-	
+
+
+	/* CADA FILA TEINEE Q SER MUTIPLO DE 4 BYTES SE COMPLETAN LOS BYTES RESTANTES PARA Q NO TIRE ERROR */
 	// ahora sigo voy a armar en visual
     return 0;
 }
