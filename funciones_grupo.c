@@ -17,16 +17,21 @@
     DNI:
     Entrega:
     -----------------
-	Apellido:
-    Nombre:
-    DNI:
-    Entrega:
+	Apellido: Viegas
+    Nombre: Chloe Jacqueline Micol	
+    DNI: 35361882
+    Entrega: Sí
     -----------------
 */
+#include <stdio.h>
+#include <stdlib.h>
+#include "estructuras.h"
 
 int solucion(int argc, char* argv[])
 {
-    /*
+    // argv [0] = nombre del archivo.exe ---> bmpmanipuleitor.exe
+	// argv [1] = filtro
+	// argv [2] = 
         Aquí deben hacer el código que solucione lo solicitado.
 	*/
     return 0;
