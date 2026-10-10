@@ -30,9 +30,16 @@
 int solucion(int argc, char* argv[])
 {
     // argv [0] = nombre del archivo.exe ---> bmpmanipuleitor.exe
-	// argv [1] = filtro
-	// argv [2] = 
-        Aquí deben hacer el código que solucione lo solicitado.
-	*/
+	// argv [1] = filtro				 ---> -- neativo
+	// argv [2] = nombre de la imagen    ---> 359.bmp
+
+	FILE *archBMP;
+	FLIE *archSalida:
+
+	struct imagen regArch;
+	struct imagen 
+
+
+	// ahora sigo voy a armar en visual
     return 0;
 }
