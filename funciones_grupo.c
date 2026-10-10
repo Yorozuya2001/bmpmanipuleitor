@@ -38,8 +38,12 @@ int solucion(int argc, char* argv[])
 
 	struct imagen regArch;
 	struct imagen 
+
 	
-/*VALIDAR BMP DE 24 BITS*/
+	/*OJOO EL BMP Q NOS PASARON NO ES UNO NORMAL TIENE CABECERA PIXELES DE RELLENO Y DSPLOS PIXELES DE LA IMAGENNNNN*/
+
+	
+	/*VALIDAR BMP DE 24 BITS*/
 	
 /*VALIDAR QUE NO ESTE COMPRIMIDA*/
 	
