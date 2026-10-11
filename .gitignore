@@ -1,0 +1,20 @@
+# Code::Blocks build
+**/bin/
+**/obj/
+*.o
+*.a
+*.depend
+
+# Salidas del manipulador
+GRUPO_*.bmp
+
+# IDE (opcional)
+*.layout
+
+# Imágenes de prueba (opcional: quitá esta línea si querés subir un .bmp chico de ejemplo)
+# *.bmp
+
+# OS
+.DS_Store
+Thumbs.db
+Trabajo Práctico 2026-2c LUNES.pdf

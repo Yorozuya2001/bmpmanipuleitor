@@ -12,13 +12,13 @@
     DNI:
     Entrega:
     -----------------
-    Apellido:
-    Nombre:
-    DNI:
-    Entrega:
+    Apellido: Valiente
+    Nombre: Axel Ariel
+    DNI: 43202499
+    Entrega: Sí
     -----------------
 	Apellido: Viegas
-    Nombre: Chloe Jacqueline Micol	
+    Nombre: Chloe Jacqueline Micol
     DNI: 35361882
     Entrega: Sí
     -----------------
@@ -27,9 +27,6 @@
 #include <stdlib.h>
 #include "estructuras.h"
 #include <string.h>
-int solucion(int argc, char* argv[])
-{
-    //#include "funciones_grupo.h"
 
 
 
@@ -38,7 +35,7 @@ int solucion(int argc, char* argv[])
    // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
    // argv [1] = filtro                  -->  --negativo
    // argv [2] = nombre de la imagne     -->  359.bmp
-   
+
 
     FILE *archBMP;
     FILE *archSalida;
