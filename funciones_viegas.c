@@ -1,4 +1,3 @@
-// #include "funciones_viegas.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,7 +25,7 @@ void crearNombreSalida(char *salida, char *filtro, char *entrada)
     char *nombre;
 
     /*
-        Buscar la Ãºltima apariciÃ³n de '/' o '\'
+        Buscar la última aparición de '/' o '\'
         para quedarnos solamente con el nombre del archivo.
     */
 

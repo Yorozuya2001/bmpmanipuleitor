@@ -1,5 +1,6 @@
 #ifndef ESTRUCTURAS_H_INCLUDED
 #define ESTRUCTURAS_H_INCLUDED
+
 // Estructura sugerida, su uso es opcional.
 //typedef struct
 //{
@@ -35,6 +36,7 @@ struct imagen
     int tamanio_tabla_color;
     int contador_colores_importantes;
 };
+
 
 
 
