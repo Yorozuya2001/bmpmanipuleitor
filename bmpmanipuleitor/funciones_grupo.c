@@ -26,15 +26,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "estructuras.h"
+#include "funciones_viegas.h"
+#include "funciones_valiente.h"
 #include <string.h>
 
 
 
 int solucion(int argc, char* argv[])
 {
-   // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
-   // argv [1] = filtro                  -->  --negativo
-   // argv [2] = nombre de la imagne     -->  359.bmp
+    // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
+    // argv [1] = filtro                  -->  --negativo
+    // argv [2] = nombre de la imagne     -->  359.bmp
 
 
     FILE *archBMP;
@@ -59,8 +61,8 @@ int solucion(int argc, char* argv[])
     }
 
     /* VALIDAR FILTRO */
-    if (strcmp(argv[1], "--negativo") != 0 &&  strcmp(argv[1], "--escala-de-grises") != 0 &&
-        strcmp(argv[1], "--espejar-horizontal") != 0 &&  strcmp(argv[1], "--espejar-vertical") != 0)
+    if (  strcmp(argv[1],"--rotar-derecha") != 0 && strcmp(argv[1],"--rotar-izquierda") != 0 && strncmp(argv[1], "--aumentar-contraste=",21) != 0 && strncmp(argv[1], "--disminuir-contraste=",22) != 0 && strcmp(argv[1], "--negativo") != 0 &&  strcmp(argv[1], "--escala-de-grises") != 0 &&
+            strcmp(argv[1], "--espejar-horizontal") != 0 &&  strcmp(argv[1], "--espejar-vertical") != 0 )
     {
         printf("Filtro no reconocido: %s\n", argv[1]);
         return 1;
@@ -76,7 +78,7 @@ int solucion(int argc, char* argv[])
     }
 
 
-     /* LEER CABECERA BMP */
+    /* LEER CABECERA BMP */
 
     // Obtengo el tipo de archivo
     regArch.letra1 = fgetc(archBMP);
@@ -189,7 +191,7 @@ int solucion(int argc, char* argv[])
     //-----------------------------------------------------------------------------------//
 
 
-     /* VALIDAR BMP 24 BITS */
+    /* VALIDAR BMP 24 BITS */
     if (regArch.tamanio_punto != 24)
     {
         printf("El BMP debe ser de 24 bits.\n");
@@ -205,7 +207,7 @@ int solucion(int argc, char* argv[])
         return 1;
     }
 
-     /* Reservo memoria para la matriz que va a almacenar la imagen */
+    /* Reservo memoria para la matriz que va a almacenar la imagen */
     matriz = reservarMatriz(regArch.ancho, regArch.alto);
 
     if (matriz == NULL)
@@ -221,7 +223,7 @@ int solucion(int argc, char* argv[])
     // Cada fila debe ocupar un múltiplo de 4 bytes. Se completan los bytes faltantes
     padding = (4 - (regArch.ancho * 3) % 4) % 4;
 
-      /* LEER LOS PIXELES */
+    /* LEER LOS PIXELES */
     // Se guardan las las filas desde abajo hacia arriba.
     // Fila 0 = parte superior
 
@@ -260,6 +262,82 @@ int solucion(int argc, char* argv[])
     else if (strcmp(argv[1], "--espejar-vertical") == 0)
     {
         espejarVertical(matriz, regArch.ancho, regArch.alto);
+
+        /*ToDo: SOLO PARA PROBAR FUNCION -> SE DEBE REFACTORIZAR */
+    }
+    else if (strcmp(argv[1],"--rotar-derecha") != 0)
+    {
+        unsigned char***matrizRotada = rotarDerecha(matriz,regArch.ancho,regArch.alto);
+        if(!matrizRotada)
+        {
+            puts("Error al resevar memoria para rotar a la derecha\n");
+            return 1;
+        }
+
+        liberarMatriz(matriz,regArch.ancho,regArch.alto);
+
+        matriz = matrizRotada;
+
+
+        int aux=  regArch.ancho;
+        regArch.ancho = regArch.alto;
+        regArch.alto = aux;
+
+        padding = (4 - (regArch.ancho * 3) % 4) % 4;
+    }
+        else if (strcmp(argv[1],"--rotar-izquierda") != 0)
+    {
+        unsigned char***matrizRotada = rotarIzquierda(matriz,regArch.ancho,regArch.alto);
+        if(!matrizRotada)
+        {
+            puts("Error al resevar memoria para rotar a la derecha\n");
+            return 1;
+        }
+
+        liberarMatriz(matriz,regArch.ancho,regArch.alto);
+
+        matriz = matrizRotada;
+
+
+        int aux=  regArch.ancho;
+        regArch.ancho = regArch.alto;
+        regArch.alto = aux;
+
+        padding = (4 - (regArch.ancho * 3) % 4) % 4;
+    }
+    else if (strncmp(argv[1], "--aumentar-contraste=",21) == 0)
+    {
+        int contraste = 0;
+        if(contraste < 0 )
+        {
+            contraste = 0;
+        }
+
+        if(contraste > 100)
+        {
+            contraste = 100;
+        }
+
+        sscanf(argv[1],"--aumentar-contraste=%d",&contraste);
+        modificarContraste(matriz,regArch.ancho,regArch.alto,contraste);
+
+    }
+    else if (strncmp(argv[1], "--disminuir-contraste=",22) == 0)
+    {
+        int contraste = 0;
+        if(contraste < 0 )
+        {
+            contraste = 0;
+        }
+
+        if(contraste > 100)
+        {
+            contraste = 100;
+        }
+
+        sscanf(argv[1],"--disminuir-contraste=%d",&contraste);
+        modificarContraste(matriz,regArch.ancho,regArch.alto,contraste * - 1);
+
     }
 
 
@@ -281,7 +359,7 @@ int solucion(int argc, char* argv[])
     regArch.tamanio_imagen = (regArch.ancho * 3 + padding) * regArch.alto;
     regArch.tamanio_archivo = regArch.inicio_datos_imagen + regArch.tamanio_imagen;
 
-     /*  ESCRIBIR CABECERA BMP */
+    /*  ESCRIBIR CABECERA BMP */
     fputc(regArch.letra1, archSalida);
     fputc(regArch.letra2, archSalida);
 
