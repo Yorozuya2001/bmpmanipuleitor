@@ -1,5 +1,7 @@
 #ifndef ESTRUCTURAS_H_INCLUDED
 #define ESTRUCTURAS_H_INCLUDED
+
+
 // Estructura sugerida, su uso es opcional.
 //typedef struct
 //{

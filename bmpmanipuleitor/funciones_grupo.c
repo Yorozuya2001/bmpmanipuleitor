@@ -7,10 +7,10 @@
     DNI:
     Entrega:
     -----------------
-    Apellido:
-    Nombre:
-    DNI:
-    Entrega:
+    Apellido:Rosales
+    Nombre: Gustavo Mauricio
+    DNI: 43665940
+    Entrega:Sí
     -----------------
     Apellido: Valiente
     Nombre: Axel Ariel
@@ -27,10 +27,12 @@
 #include <stdlib.h>
 #include "estructuras.h"
 #include <string.h>
+#include "funciones_viegas.h"
+#include "funciones_rosales.h"
 
 
 
-int solucion(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
    // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
    // argv [1] = filtro                  -->  --negativo
@@ -58,9 +60,11 @@ int solucion(int argc, char* argv[])
         return 1;
     }
 
-    /* VALIDAR FILTRO */
+    ///El filtro lo validaría con un switch case, para que quede más legible
     if (strcmp(argv[1], "--negativo") != 0 &&  strcmp(argv[1], "--escala-de-grises") != 0 &&
-        strcmp(argv[1], "--espejar-horizontal") != 0 &&  strcmp(argv[1], "--espejar-vertical") != 0)
+        strcmp(argv[1], "--espejar-horizontal") != 0 &&  strcmp(argv[1], "--espejar-vertical") != 0
+        && strcmp(argv[1],"--tonalidad-azul") != 0 && strcmp(argv[1],"--tonalidad-verde") != 0
+        && strcmp(argv[1],"--recortar") != 0 && strcmp(argv[1],"--achicar") != 0)
     {
         printf("Filtro no reconocido: %s\n", argv[1]);
         return 1;
@@ -79,7 +83,7 @@ int solucion(int argc, char* argv[])
      /* LEER CABECERA BMP */
 
     // Obtengo el tipo de archivo
-    regArch.letra1 = fgetc(archBMP);
+    regArch.letra1 = fgetc(archBMP); ///Fgetc lee caracteres individualmente y devuelve un int como valor ASCII del caracter
     regArch.letra2 = fgetc(archBMP);
 
     if (regArch.letra1 != 'B' || regArch.letra2 != 'M')
@@ -88,6 +92,8 @@ int solucion(int argc, char* argv[])
         fclose(archBMP);
         return 1;
     }
+
+    ///Obtencion de datos/propiedades del archivo: alto, ancho,tamanio,etc
 
     // Obtengo el tamanio del archivo
     fseek(archBMP, 2, SEEK_SET);
@@ -153,6 +159,8 @@ int solucion(int argc, char* argv[])
     //-----------------------------------------------------------------------------------//
     // bytes adicionales entre el final de la cabecera y el comienzo de los pixeles
 
+    ///El encabezado del archivo tiene 54 bytes
+
     tamanioExtra = regArch.inicio_datos_imagen - 54;
 
     if (tamanioExtra < 0)
@@ -205,7 +213,13 @@ int solucion(int argc, char* argv[])
         return 1;
     }
 
-     /* Reservo memoria para la matriz que va a almacenar la imagen */
+     if (strcmp(argv[1], "--achicar") == 0)
+    {
+        regArch.ancho = regArch.ancho;
+        regArch.alto = regArch.alto;
+    }
+
+   /* Reservo memoria para la matriz que va a almacenar la imagen */
     matriz = reservarMatriz(regArch.ancho, regArch.alto);
 
     if (matriz == NULL)
@@ -219,6 +233,10 @@ int solucion(int argc, char* argv[])
     fseek(archBMP, regArch.inicio_datos_imagen, SEEK_SET);
 
     // Cada fila debe ocupar un múltiplo de 4 bytes. Se completan los bytes faltantes
+    ///Por qué se trabaja el padding con múltiplo de 4 bytes
+       ///No daría siempre cero? Independientemente del ancho que tenga
+
+
     padding = (4 - (regArch.ancho * 3) % 4) % 4;
 
       /* LEER LOS PIXELES */
@@ -244,6 +262,7 @@ int solucion(int argc, char* argv[])
     fclose(archBMP);
 
     /* APLICAR FILTRO */
+    ///Aplicar un switch case tambien
 
     if (strcmp(argv[1], "--negativo") == 0)
     {
@@ -262,6 +281,27 @@ int solucion(int argc, char* argv[])
         espejarVertical(matriz, regArch.ancho, regArch.alto);
     }
 
+    ///Probamos funcionalidades nuevas propias(Rosales)
+    else if (strcmp(argv[1], "--tonalidad-azul") == 0)
+    {
+        tonalidadAzul(matriz,regArch.ancho,regArch.alto);
+    }
+
+    else if (strcmp(argv[1], "--tonalidad-verde") == 0)
+    {
+        tonalidadVerde(matriz,regArch.ancho,regArch.alto);
+    }
+
+    else if (strcmp(argv[1], "--recortar") == 0)
+    {
+        recortarImagen(&regArch.ancho,&regArch.alto,&padding);
+    }
+
+    else if (strcmp(argv[1], "--achicar") == 0)
+    {
+        achicarImagen(matriz,&regArch.ancho,&regArch.alto);
+    }
+
 
     /*  CREAR NOMBRE DEL ARCHIVO DE SALIDA */
     crearNombreSalida(nombreSalida, argv[1] + 2, argv[2]);
@@ -277,7 +317,10 @@ int solucion(int argc, char* argv[])
         return 1;
     }
 
-    // recalcular tamaño
+    padding = (4 - (regArch.ancho * 3) % 4) % 4;
+
+
+
     regArch.tamanio_imagen = (regArch.ancho * 3 + padding) * regArch.alto;
     regArch.tamanio_archivo = regArch.inicio_datos_imagen + regArch.tamanio_imagen;
 
@@ -306,10 +349,12 @@ int solucion(int argc, char* argv[])
         fwrite(datosExtra, 1, tamanioExtra, archSalida);
     }
 
+
+
     /*  LA NUEVA IMAGEN CON EL FILTRO APLICADO (ESCRIBIR PIXELES) */
     for (i = regArch.alto - 1; i >= 0; i--)
     {
-        for (j = 0; j < regArch.ancho; j++)
+        for (j = 0; j < regArch.ancho ; j++)
         {
             fputc(matriz[i][j][0], archSalida); // B
             fputc(matriz[i][j][1], archSalida); // G
