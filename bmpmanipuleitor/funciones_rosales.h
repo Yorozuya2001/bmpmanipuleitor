@@ -4,7 +4,7 @@
 #define INTENSIDAD_AZUL 0.5
 #define INTENSIDAD_VERDE 0.05
 #define RECORTE 0.30
-#define REDUCCION 0.80
+#define REDUCCION 0.10
 
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto);
 void tonalidadVerde(unsigned char ***matriz,int ancho,int alto);

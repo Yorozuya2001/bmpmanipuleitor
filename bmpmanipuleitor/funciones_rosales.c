@@ -1,4 +1,5 @@
 #include "funciones_rosales.h"
+#include "funciones_viegas.h"
 #include <stdlib.h>
 
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto)
@@ -61,39 +62,34 @@ void recortarImagen(int* ancho,int* alto,int* padding)
 unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto)
 {
 
-   *ancho = *ancho * REDUCCION;
-   *alto = *alto * REDUCCION;
+   int anchoOrig = *ancho;
+   int altoOrig  = *alto;
+   int anchoRed = anchoOrig * REDUCCION;
+   int altoRed  = altoOrig  * REDUCCION;
 
-   ///Hacemos un realloc de la matriz
-    int i, j;
+    unsigned char ***nueva_matriz = reservarMatriz(anchoRed,altoRed);
 
-    unsigned char ***nueva_matriz = realloc(matriz, *alto * sizeof(unsigned char **));
+    float pasoX = (float)anchoOrig / (float)anchoRed;
+    float pasoY = (float)altoOrig  / (float)altoRed;
 
-    if (nueva_matriz == NULL)
-        return NULL;
-
-    matriz = nueva_matriz;
-
-    for (i = 0; i < *alto; i++)
-    {
-        unsigned char **fila= realloc(matriz[i],*ancho * sizeof(unsigned char *));
-
-        if (fila == NULL)
-            return NULL;
-
-        matriz[i]=fila;
-
-        for (j = 0; j < *ancho; j++)
-        {
-            unsigned char *elem= realloc(matriz[i][j],3 * sizeof(unsigned char));
-
-            if (elem == NULL)
-                return NULL;
-
-            matriz[i][j]=elem;
+    for (int i = 0; i < altoRed; i++) {
+        for (int j = 0; j < anchoRed; j++) {
+            int io = (int)(i * pasoY);
+            int jo = (int)(j * pasoX);
+            nueva_matriz[i][j][0] = matriz[io][jo][0];
+            nueva_matriz[i][j][1] = matriz[io][jo][1];
+            nueva_matriz[i][j][2] = matriz[io][jo][2];
         }
-     }
-    return matriz;
+    }
+
+     liberarMatriz(matriz,&anchoOrig,&altoOrig);
+
+    *ancho = anchoRed;
+    *alto  = altoRed;
+
+    return nueva_matriz;
+
+
 
 }
 
