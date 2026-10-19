@@ -3,13 +3,24 @@
 
 #define INTENSIDAD_AZUL 0.5
 #define INTENSIDAD_VERDE 0.05
+#define INTENSIDAD_ROJA 0.15
 #define RECORTE 0.30
 #define REDUCCION 0.10
 
-void tonalidadAzul(unsigned char ***matriz, int ancho, int alto);
-void tonalidadVerde(unsigned char ***matriz,int ancho,int alto);
-void recortarImagen(int* ancho,int* alto,int* padding);
-unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto);
+void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent);
+void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent);
+void recortarImagen(int* ancho,int* alto,int* padding,int* porcent);
+unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,int* porcent);
+
+///Funciones restantes alternativas
+void tonalidadRoja(unsigned char ***matriz, int ancho, int alto,int* porcent);
+
+///Funcion comodin
+
+
+
+
+
 
 
 

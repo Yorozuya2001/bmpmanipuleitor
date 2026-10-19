@@ -22,7 +22,7 @@ void liberarMatriz(unsigned char ***matriz, int* ancho, int* alto)
 
 
 
-void crearNombreSalida(char *salida, char *filtro, char *entrada)
+char* crearNombreSalida(char *salida, char *filtro, char *entrada)
 {
     char *nombre;
 
@@ -42,6 +42,8 @@ void crearNombreSalida(char *salida, char *filtro, char *entrada)
         nombre++;
 
     sprintf(salida, "%s_%s_%s", GRUPO, filtro, nombre);
+
+    return salida;
 }
 
 
