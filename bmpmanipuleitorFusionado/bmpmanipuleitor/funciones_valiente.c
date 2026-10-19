@@ -45,7 +45,7 @@ unsigned char***rotarDerecha(unsigned char ***matriz,int ancho,int alto)
 
     unsigned char*** nuevo = reservarMatriz(nuevoAncho,nuevoAlto);
 
-    /* Aquí se debe de manejar el error */
+    /* Aqu  se debe de manejar el error */
     if(!nuevo)
     {
         return NULL;
@@ -73,7 +73,7 @@ unsigned char ***rotarIzquierda(unsigned char ***matriz, int ancho, int alto)
 
     unsigned char ***nuevo = reservarMatriz(nuevoAncho, nuevoAlto);
 
-    /* Aquí se debe de manejar el error */
+    /* Aqu  se debe de manejar el error */
     if(!nuevo)
     {
         return NULL;

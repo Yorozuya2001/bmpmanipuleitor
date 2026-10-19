@@ -8,4 +8,5 @@ unsigned char ***rotarDerecha(unsigned char ***matriz,int ancho,int alto);
 unsigned char ***rotarIzquierda(unsigned char ***matriz,int ancho,int alto);
 
 
+
 #endif // FUNCIONES_VALIENTE_H_INCLUDED

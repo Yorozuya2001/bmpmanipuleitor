@@ -40,6 +40,10 @@
 		</Unit>
 		<Unit filename="compartido.h" />
 		<Unit filename="estructuras.h" />
+		<Unit filename="funciones_bustillos.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="funciones_bustillos.h" />
 		<Unit filename="funciones_grupo.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -56,6 +60,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="funciones_viegas.h" />
-		<Extensions />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

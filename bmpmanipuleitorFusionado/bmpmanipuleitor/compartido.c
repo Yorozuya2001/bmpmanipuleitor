@@ -99,8 +99,6 @@ int validar_profundidad(FILE* archBMP,int* tamPunto)
     }
 
     return TODO_OK;
-
-
 }
 
 
@@ -140,8 +138,6 @@ int obtener_TamArchivo(FILE* archBMP,struct imagen* reg)
   tamArchivo=reg->tamanio_archivo;
 
   return tamArchivo;
-
-
 }
 
 
