@@ -1,34 +1,91 @@
 # depslib dependency file v1.0
-1791834656 source:c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\funciones_grupo.c
+1792369489 source:c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_grupo.c
 	<stdio.h>
 	<stdlib.h>
-	<string.h>
 	"estructuras.h"
-
-1791833140 c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\estructuras.h
-
-1791834313 c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\funciones_viegas.h
-
-1791833249 c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\funciones_valiente.h
-	<stddef.h>
-
-1791834737 source:c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\funciones_valiente.c
-	<stdio.h>
-	<stdlib.h>
+	<string.h>
+	"funciones_grupo.h"
 	"funciones_viegas.h"
+	"funciones_rosales.h"
+	"funciones_bustillos.h"
 
-1791833193 source:c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\funciones_viegas.c
+1792364909 c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\estructuras.h
+
+1792364909 c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_viegas.h
+
+1792364909 c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_rosales.h
+
+1792369558 c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_bustillos.h
+
+1792364909 source:c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_rosales.c
+	"funciones_rosales.h"
+	"funciones_viegas.h"
+	<stdlib.h>
+
+1792364909 source:c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_valiente.c
+	"funciones_valiente.h"
+
+1792364909 c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_valiente.h
+
+1792364909 source:c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_viegas.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 
-1791835030 source:c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\main.c
-	<stdio.h>
+1792369704 source:c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_bustillos.c
+	"funciones_bustillos.h"
+	"estructuras.h"
+	"funciones_viegas.h"
 	<stdlib.h>
-	"funciones_grupo.h"
 
-1791834659 c:\users\lenovo\desktop\jacqueline viegas\githubcorregido\funciones_grupo.h
-	"funciones_rufino.h"
+1792367363 c:\users\juanc\documents\topicos\bmpmanipuleitor\bmpmanipuleitor\funciones_grupo.h
 	"funciones_viegas.h"
 	"funciones_valiente.h"
+	"funciones_rosales.h"
+	"funciones_bustillos.h"
+
+1792364909 source:c:\users\juanc\documents\nuevodirtptopicos\funciones_rosales.c
+	"funciones_rosales.h"
+	"funciones_viegas.h"
+	<stdlib.h>
+
+1792364909 c:\users\juanc\documents\nuevodirtptopicos\funciones_rosales.h
+
+1792364909 c:\users\juanc\documents\nuevodirtptopicos\funciones_viegas.h
+
+1792364909 source:c:\users\juanc\documents\nuevodirtptopicos\funciones_valiente.c
+	"funciones_valiente.h"
+
+1792364909 c:\users\juanc\documents\nuevodirtptopicos\funciones_valiente.h
+
+1792364909 source:c:\users\juanc\documents\nuevodirtptopicos\funciones_viegas.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1792370847 source:c:\users\juanc\documents\nuevodirtptopicos\funciones_bustillos.c
+	"funciones_bustillos.h"
+	"estructuras.h"
+	"funciones_viegas.h"
+	<stdlib.h>
+
+1792370867 c:\users\juanc\documents\nuevodirtptopicos\funciones_bustillos.h
+
+1792364909 c:\users\juanc\documents\nuevodirtptopicos\estructuras.h
+
+1792370368 source:c:\users\juanc\documents\nuevodirtptopicos\funciones_grupo.c
+	<stdio.h>
+	<stdlib.h>
+	"estructuras.h"
+	<string.h>
+	"funciones_grupo.h"
+	"funciones_viegas.h"
+	"funciones_rosales.h"
+	"funciones_bustillos.h"
+
+1792367363 c:\users\juanc\documents\nuevodirtptopicos\funciones_grupo.h
+	"funciones_viegas.h"
+	"funciones_valiente.h"
+	"funciones_rosales.h"
+	"funciones_bustillos.h"
 

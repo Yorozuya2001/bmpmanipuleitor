@@ -1,12 +1,11 @@
-
 /*
     Integrantes del grupo. En caso de ser un grupo de dos integrantes, no completar el último campo.
     Si alguno de los integrantes del grupo dejara la materia, completar de todos modos sus datos, aclarando que no entrega.
     -----------------
-    Apellido:
-    Nombre:
-    DNI:
-    Entrega:
+    Apellido: Bustillos
+    Nombre: Juan Ignacio
+    DNI: 46876304
+    Entrega: Sí
     -----------------
     Apellido:Rosales
     Nombre: Gustavo Mauricio
@@ -25,12 +24,13 @@
     -----------------
 */
 #include <stdio.h>
-
 #include <stdlib.h>
 #include "estructuras.h"
 #include <string.h>
+#include "funciones_grupo.h"
 #include "funciones_viegas.h"
 #include "funciones_rosales.h"
+#include "funciones_bustillos.h"
 
 
 
@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
    // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
    // argv [1] = filtro                  -->  --negativo
    // argv [2] = nombre de la imagne     -->  359.bmp
+   // argv [3] = segunda imagen          -->  otra.bmp (solo para --concatenar-...)   
 
 
     FILE *archBMP;
@@ -46,20 +47,31 @@ int main(int argc, char* argv[])
 
     struct imagen regArch;
     struct imagen regSalida;
+    struct imagen regArch2;                 
 
     unsigned char ***matriz;
+    unsigned char ***matriz2 = NULL;        
     unsigned char ***matRed;
     char nombreSalida[500];
     int padding;
     int i, j;
     unsigned char *datosExtra;
     int tamanioExtra;
+    int esConcatenar;                       
 
     /* VALIDAR ARGUMENTOS */
-    if (argc != 3)
+    
+    //Detecto si tiene 3 o 4 argumentos
+    esConcatenar = (argc >= 2) && (strcmp(argv[1], "--concatenar-horizontal") == 0 || strcmp(argv[1], "--concatenar-vertical") == 0);
+
+    if ((!esConcatenar && argc != 3) ||
+        (esConcatenar && argc != 4))
     {
         printf("Uso:\n");
         printf("bmpmanipuleitor.exe --filtro imagen.bmp\n");
+        printf("bmpmanipuleitor.exe --concatenar-horizontal imagen1.bmp imagen2.bmp\n");
+        printf("bmpmanipuleitor.exe --concatenar-vertical imagen1.bmp imagen2.bmp\n");
+
         return 1;
     }
 
@@ -67,7 +79,9 @@ int main(int argc, char* argv[])
     if (strcmp(argv[1], "--negativo") != 0 &&  strcmp(argv[1], "--escala-de-grises") != 0 &&
         strcmp(argv[1], "--espejar-horizontal") != 0 &&  strcmp(argv[1], "--espejar-vertical") != 0
         && strcmp(argv[1],"--tonalidad-azul") != 0 && strcmp(argv[1],"--tonalidad-verde") != 0
-        && strcmp(argv[1],"--recortar") != 0 && strcmp(argv[1],"--achicar") != 0)
+        && strcmp(argv[1],"--recortar") != 0 && strcmp(argv[1],"--achicar") != 0 && strcmp(argv[1],"--tonalidad-roja") != 0
+        && strcmp(argv[1],"--concatenar-horizontal") != 0       
+        && strcmp(argv[1],"--concatenar-vertical") != 0 && strcmp(argv[1],"--achicar") != 0 && strcmp(argv[1],"--comodin"))        
     {
         printf("Filtro no reconocido: %s\n", argv[1]);
         return 1;
@@ -264,6 +278,21 @@ int main(int argc, char* argv[])
 
     fclose(archBMP);
 
+    // Compruebo si esConcatenar es igual a 1, y cargo la matriz 2 con la nueva imagen
+    if (esConcatenar)
+    {
+        matriz2 = leerBMP(argv[3], &regArch2);
+
+        if (matriz2 == NULL)
+        {
+            liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
+            free(datosExtra);
+            return 1;
+        }
+    }
+
+    matRed = matriz;
+
     /* APLICAR FILTRO */
     ///Aplicar un switch case tambien
 
@@ -303,6 +332,40 @@ int main(int argc, char* argv[])
     else if (strcmp(argv[1], "--achicar") == 0)
     {
         matRed=achicarImagen(matriz,&regArch.ancho,&regArch.alto);
+    }
+    else if (strcmp(argv[1], "--tonalidad-roja") == 0)
+    {
+        tonalidadRoja(matriz,regArch.ancho,regArch.alto);
+    }
+    else if (strcmp(argv[1], "--comodin") == 0)
+    {
+        comodin(matriz,regArch.ancho,regArch.alto);
+    }
+    else if (strcmp(argv[1], "--concatenar-horizontal") == 0)
+    {
+        matRed = concatenarHorizontal(matriz, &regArch.ancho, &regArch.alto, matriz2, regArch2.ancho, regArch2.alto);
+        liberarMatriz(matriz2, &regArch2.ancho, &regArch2.alto);
+
+        if (matRed == NULL)
+        {
+            printf("No se pudo reservar memoria.\n");
+            liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
+            free(datosExtra);       
+            return 1;
+        }
+    }
+    else if (strcmp(argv[1], "--concatenar-vertical") == 0)
+    {
+        matRed = concatenarVertical(matriz, &regArch.ancho, &regArch.alto, matriz2, regArch2.ancho, regArch2.alto);
+        liberarMatriz(matriz2, &regArch2.ancho, &regArch2.alto);
+
+        if (matRed == NULL)
+        {
+            printf("No se pudo reservar memoria.\n");
+            liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
+            free(datosExtra);       
+            return 1;
+        }
     }
 
 
@@ -377,4 +440,76 @@ int main(int argc, char* argv[])
     printf("Archivo generado correctamente: %s\n", nombreSalida);
 
     return 0;
+}
+
+unsigned char ***leerBMP(const char *nombre, struct imagen *reg)
+{
+    FILE *arch;
+    unsigned char ***mat;
+    int padding, i, j;
+
+    arch = fopen(nombre, "rb");
+    if (arch == NULL)
+    {
+        printf("No se pudo abrir el archivo %s\n", nombre);
+        return NULL;
+    }
+
+    reg->letra1 = fgetc(arch);
+    reg->letra2 = fgetc(arch);
+    if (reg->letra1 != 'B' || reg->letra2 != 'M')
+    {
+        printf("%s no es un BMP valido.\n", nombre);
+        fclose(arch);
+        return NULL;
+    }
+
+    fseek(arch, 2, SEEK_SET);  fread(&reg->tamanio_archivo, 4, 1, arch);
+    fseek(arch, 6, SEEK_SET);  fread(&reg->reservado1, 2, 1, arch);
+    fseek(arch, 8, SEEK_SET);  fread(&reg->reservado2, 2, 1, arch);
+    fseek(arch, 10, SEEK_SET); fread(&reg->inicio_datos_imagen, 4, 1, arch);
+    fseek(arch, 14, SEEK_SET); fread(&reg->tamanio_cabecera, 4, 1, arch);
+    fseek(arch, 18, SEEK_SET); fread(&reg->ancho, 4, 1, arch);
+    fseek(arch, 22, SEEK_SET); fread(&reg->alto, 4, 1, arch);
+    fseek(arch, 26, SEEK_SET); fread(&reg->nro_planos, 2, 1, arch);
+    fseek(arch, 28, SEEK_SET); fread(&reg->tamanio_punto, 2, 1, arch);
+    fseek(arch, 30, SEEK_SET); fread(&reg->compresion, 4, 1, arch);
+    fseek(arch, 34, SEEK_SET); fread(&reg->tamanio_imagen, 4, 1, arch);
+    fseek(arch, 38, SEEK_SET); fread(&reg->resolucion_horizontal, 4, 1, arch);
+    fseek(arch, 42, SEEK_SET); fread(&reg->resolucion_vertical, 4, 1, arch);
+    fseek(arch, 46, SEEK_SET); fread(&reg->tamanio_tabla_color, 4, 1, arch);
+    fseek(arch, 50, SEEK_SET); fread(&reg->contador_colores_importantes, 4, 1, arch);
+
+    if (reg->tamanio_punto != 24 || reg->compresion != 0)
+    {
+        printf("%s debe ser de 24 bits y sin compresion.\n", nombre);
+        fclose(arch);
+        return NULL;
+    }
+
+    mat = reservarMatriz(reg->ancho, reg->alto);
+    if (mat == NULL)
+    {
+        printf("No se pudo reservar memoria.\n");
+        fclose(arch);
+        return NULL;
+    }
+
+    fseek(arch, reg->inicio_datos_imagen, SEEK_SET);
+    padding = (4 - (reg->ancho * 3) % 4) % 4;
+
+    for (i = reg->alto - 1; i >= 0; i--)
+    {
+        for (j = 0; j < reg->ancho; j++)
+        {
+            mat[i][j][0] = fgetc(arch);
+            mat[i][j][1] = fgetc(arch);
+            mat[i][j][2] = fgetc(arch);
+        }
+        for (j = 0; j < padding; j++)
+            fgetc(arch);
+    }
+
+    fclose(arch);
+    return mat;
 }
