@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     validarParametros(&argc,argv[1],argv[2]);
 
     ///Apertura de Archivo
-    archBMP=abrirArchivo(argv[2]);
+    archBMP=abrirArchivo(argv[2],"rb");
 
 
     ///Obtencion de datos/propiedades del archivo: alto, ancho,tamanio,etc
@@ -94,11 +94,15 @@ int main(int argc, char* argv[])
     ///Menu de opciones
     aplicarFiltro(matriz,argv[1],&ancho,&alto,&padding);
 
+    ///Apertura del archivo de salida
+
 
 
 
     /*  CREAR NOMBRE DEL ARCHIVO DE SALIDA */
     p_nombreSalida=crearNombreSalida(nombreSalida, argv[1] + 2, argv[2]);
+
+    archSalida=abrirArchivo(p_nombreSalida,"wb");
 
 
     /* CREAR ARCHIVO DE SALIDA */

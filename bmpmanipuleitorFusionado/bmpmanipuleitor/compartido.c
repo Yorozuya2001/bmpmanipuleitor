@@ -108,12 +108,12 @@ int validar_profundidad(FILE* archBMP,int* tamPunto)
 }
 
 
-FILE* abrirArchivo(char* nombreArchivo)
+FILE* abrirArchivo(char* nombreArchivo,const char* modoApertura)
 {
-    FILE* archBMP = fopen(nombreArchivo, "rb");
+    FILE* archivo = fopen(nombreArchivo,modoApertura);
     struct imagen regArch;
 
-    if (archBMP == NULL){
+    if (archivo == NULL){
         printf("No se pudo abrir el archivo %s\n",nombreArchivo);
     }
 
@@ -121,16 +121,16 @@ FILE* abrirArchivo(char* nombreArchivo)
      /* LEER CABECERA BMP */
 
     // Obtengo el tipo de archivo
-    regArch.letra1 = fgetc(archBMP); ///Fgetc lee caracteres individualmente y devuelve un int como valor ASCII del caracter
-    regArch.letra2 = fgetc(archBMP);
+    regArch.letra1 = fgetc(archivo); ///Fgetc lee caracteres individualmente y devuelve un int como valor ASCII del caracter
+    regArch.letra2 = fgetc(archivo);
 
     if (regArch.letra1 != 'B' || regArch.letra2 != 'M')
     {
         printf("El archivo no es un BMP valido.\n");
-        fclose(archBMP);
+        fclose(archivo);
     }
 
-    return archBMP;
+    return archivo;
 
 }
 
@@ -189,6 +189,80 @@ int obtener_Ancho(FILE* archBMP,struct imagen* reg)
 
 }
 
+int obtener_NroPlanos(FILE* archBMP,struct imagen* reg)
+{
+
+   int nroPlanos;
+
+
+   fseek(archBMP, 26, SEEK_SET);
+   fread(&reg->nro_planos, 2, 1, archBMP);
+   nroPlanos=reg->nro_planos;
+
+   return nroPlanos;
+}
+
+int obtener_Compresion(FILE* archBMP,struct imagen* reg)
+{
+
+    int compresion;
+
+    fseek(archBMP, 30, SEEK_SET);
+    fread(&reg->compresion, 4, 1, archBMP);
+    compresion=reg->compresion;
+
+    return compresion;
+}
+
+int obtener_resolHorizontal(FILE* archBMP,struct imagen* reg)
+{
+
+    int resolHorizontal;
+
+    fseek(archBMP, 38, SEEK_SET);
+    fread(&reg->resolucion_horizontal, 4, 1, archBMP);
+    resolHorizontal=reg->resolucion_horizontal;
+
+    return resolHorizontal;
+
+}
+int obtener_resolVertical(FILE* archBMP, struct imagen* reg)
+{
+
+    int resolVertical;
+
+    fseek(archBMP, 42, SEEK_SET);
+    fread(&reg->resolucion_vertical, 4, 1, archBMP);
+    resolVertical=reg->resolucion_vertical;
+
+    return resolVertical;
+}
+
+int obtenerTam_TablaColor(FILE* archBMP,struct imagen* reg)
+{
+    int tamTabla_color;
+
+    fseek(archBMP, 46, SEEK_SET);
+    fread(&reg->tamanio_tabla_color, 4, 1, archBMP);
+    tamTabla_color=reg->tamanio_tabla_color;
+
+
+    return tamTabla_color;
+}
+
+int obtener_cont_color_importantes(FILE* archBMP,struct imagen* reg)
+{
+    int contador;
+
+
+    fseek(archBMP, 50, SEEK_SET);
+    fread(&reg->contador_colores_importantes, 4, 1, archBMP);
+    contador=reg->contador_colores_importantes;
+
+    return contador;
+}
+
+
 int obtener_Alto(FILE* archBMP,struct imagen* reg)
 {
     int altoImagen;
@@ -221,6 +295,34 @@ int obtener_TamImagen(FILE* archBMP, struct imagen* reg)
   tamImagen=reg->tamanio_imagen;
 
   return tamImagen;
+
+}
+
+int obtener_primerReservado(FILE* archBMP,struct imagen* reg)
+{
+    int primerCampo;
+
+
+    // Obtengo el primer campo reservado
+    fseek(archBMP, 6, SEEK_SET);
+    fread(&reg->reservado1, 2, 1, archBMP);
+    primerCampo=reg->reservado1;
+
+    return primerCampo;
+}
+
+int obtener_segundoReservado(FILE* archBMP,struct imagen* reg)
+{
+
+    int segundoCampo;
+
+    // Obtengo el segundo campo reservado
+    fseek(archBMP, 8, SEEK_SET);
+    fread(&reg->reservado2, 2, 1, archBMP);
+    segundoCampo=reg->reservado2;
+
+    return segundoCampo;
+
 
 }
 
@@ -257,7 +359,7 @@ int cargarImagen_Matriz(FILE* archBMP,unsigned char*** matriz,int* inicioDatos,i
 
 
 ///Menu de opciones que ejecuta las funcionalidades en base al filtro ingresado
-int aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding)
+unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding)
 {
 
     int porcentaje;
@@ -310,11 +412,12 @@ int aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* al
     else if (strcmp(filtro, "--achicar") == 0){
         unsigned char*** mat;
         mat=achicarImagen(matriz,ancho,alto,&porcentaje);
+        return mat;
     }
 
     ///Acá agregan la llamada al resto de las funciones
 
-    return TODO_OK;
+    return matriz;
 
 }
 
@@ -324,6 +427,7 @@ int generar_ArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigne
     int tamImagen=obtener_TamImagen(archBMP,reg);
     int tamArchivo=obtener_TamArchivo(archBMP,reg);
     int tamCabecera=obtener_TamCabecera(archBMP,reg);
+
 
     archSalida = fopen(nombreSalida, "wb");
 
@@ -336,7 +440,7 @@ int generar_ArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigne
 
     *padding = (4 - (reg->ancho * 3) % 4) % 4;
 
-    tamImagen = (reg->ancho * 3 + *padding) * reg->alto;
+    tamImagen = (reg->ancho * 3 + * padding) * reg->alto;
     reg->tamanio_archivo = reg->inicio_datos_imagen + reg->tamanio_imagen;
 
      /*  ESCRIBIR CABECERA BMP */
@@ -353,7 +457,7 @@ int generar_ArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigne
     fwrite(&reg->nro_planos, 2, 1, archSalida);
     fwrite(&reg->tamanio_punto, 2, 1, archSalida);
     fwrite(&reg->compresion, 4, 1, archSalida);
-    fwrite(&reg->tamanio_imagen, 4, 1, archSalida);
+    fwrite(&tamImagen, 4, 1, archSalida);
     fwrite(&reg->resolucion_horizontal, 4, 1, archSalida);
     fwrite(&reg->resolucion_vertical, 4, 1, archSalida);
     fwrite(&reg->tamanio_tabla_color, 4, 1, archSalida);
