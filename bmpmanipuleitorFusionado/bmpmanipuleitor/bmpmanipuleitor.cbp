@@ -13,7 +13,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters='&quot;--tonalidad-roja&quot; &quot;C:\Users\rosal\Documentos\BMP_Manipuleitor\bmpmanipuleitor\unlam.bmp&quot;' />
+				<Option parameters='&quot;--tonalidad-roja&quot; &quot;C:\Users\rosal\Documentos\BMP_Manipuleitor\bmpmanipuleitor\bmpmanipuleitorFusionado\bmpmanipuleitor\unlam.bmp&quot;' />
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -60,10 +60,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="funciones_viegas.h" />
-		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

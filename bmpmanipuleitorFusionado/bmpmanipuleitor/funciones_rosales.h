@@ -12,10 +12,6 @@ void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent);
 void recortarImagen(int* ancho,int* alto,int* padding,int* porcent);
 unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,int* porcent);
 
-///Funciones restantes alternativas
-void tonalidadRoja(unsigned char ***matriz, int ancho, int alto,int* porcent);
-
-///Funcion comodin
 
 
 

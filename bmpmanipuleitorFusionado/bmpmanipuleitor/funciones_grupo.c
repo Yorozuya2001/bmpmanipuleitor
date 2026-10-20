@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
     char nombreSalida[500];
     char* p_nombreSalida=nombreSalida;
     int padding;
-    unsigned char *datosExtra;
+    //unsigned char *datosExtra;
     //int tamanioExtra;
 
     /* VALIDAR ARGUMENTOS */
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     /* CREAR ARCHIVO DE SALIDA */
     generar_ArchSalida(nombreSalida,archBMP,archSalida,matriz,&padding,&regArch);
 
-    free(datosExtra);
+    //free(datosExtra);
     liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
 
     fclose(archSalida);

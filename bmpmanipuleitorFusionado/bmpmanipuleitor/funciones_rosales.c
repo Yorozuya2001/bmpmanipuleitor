@@ -89,29 +89,7 @@ unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,in
 
     return nueva_matriz;
 }
-///Funciones restantes (version alternativa)
 
-void tonalidadRoja(unsigned char ***matriz, int ancho, int alto, int* porcent)
-{
-   int i, j;
-   int incremento;
-
-    for (i = 0; i < alto; i++)
-    {
-        for (j = 0; j < ancho; j++)
-        {
-            /*
-                matriz[i][j][0] = B
-                matriz[i][j][1] = G
-                matriz[i][j][2] = R
-            */
-
-            incremento = matriz[i][j][2] + INTENSIDAD_ROJA * matriz[i][j][2];
-
-            matriz[i][j][2] = incremento;
-        }
-    }
-}
 
 
 

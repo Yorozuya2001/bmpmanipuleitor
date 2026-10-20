@@ -15,6 +15,7 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen)
    // argv [1] = filtro                  -->  --negativo
    // argv [2] = nombre de la imagne     -->  359.bmp
     const char extension[]=".bmp";
+    int filtroAccedido=0;
 
 
     if (*argc <3){
@@ -24,23 +25,28 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen)
         return -1;
     }
 
-    const char listado_Funciones[5][100]= {"--negativo,--escala-de-grises,--espejar-horizontal",
-                                 "--espejar-vertical,--aumentar-contraste,--reducir-contraste",
-                                 "--tonalidad-azul,--tonalidad-verde,--tonalidad-roja",
-                                 "--recortar,--achicar,--rotar-derecha",
-                                 "--rotar-izquierda,--concatenar-horizontal,--concatenar-vertical"
-                                 };
+   const char *listado_Funciones[] = {
+        "--negativo", "--escala-de-grises", "--espejar-horizontal",
+        "--espejar-vertical", "--aumentar-contraste", "--reducir-contraste",
+        "--tonalidad-azul", "--tonalidad-verde", "--tonalidad-roja",
+        "--recortar", "--achicar", "--rotar-derecha",
+        "--rotar-izquierda", "--concatenar-horizontal", "--concatenar-vertical"
+    };
 
     ///Validar ingreso de filtro
-    for(int i=0;i<=4;i++){
-            if(strstr(filtro,listado_Funciones[i])==NULL){
-                printf("Filtro no reconocido: %s\n",filtro);
-                return FALLA;
+    for(int i=0;i<=14;i++){
+            if(strstr(listado_Funciones[i],filtro)!=NULL){
+                filtroAccedido=1;
             }
           }
 
+      if(filtroAccedido==0){
+         printf("Filtro no reconocido");
+         return FALLA;
+      }
+
       ///Validar extension de la imagen
-      if(strstr(extension,pathImagen)==NULL){
+      if(strstr(pathImagen,extension)==NULL){
           printf("Archivo ingresado invalido. Debe ser una imagen BMP");
           return FALLA;
 
@@ -255,7 +261,6 @@ int aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* al
 {
 
     int porcentaje;
-    int opcion;
 
     ///Funcionalidades que reciben porcentaje como argumento
     char filtrosxPorcent[7][30]={
@@ -267,10 +272,11 @@ int aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* al
                                "--recortar",
                                "--achicar"
                                };
+    char nombreFiltro[50];
 
     for(int i=0;i<=6;i++){
       if(strstr(filtro,filtrosxPorcent[i])!=NULL){
-         sscanf(filtro,"%s=%d",filtro,&porcentaje);
+         sscanf(filtro,"%s=%d",nombreFiltro,&porcentaje);
        }
 
     }
@@ -302,7 +308,8 @@ int aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* al
     }
 
     else if (strcmp(filtro, "--achicar") == 0){
-        unsigned char*** mat=achicarImagen(matriz,ancho,alto,&porcentaje);
+        unsigned char*** mat;
+        mat=achicarImagen(matriz,ancho,alto,&porcentaje);
     }
 
     ///Acá agregan la llamada al resto de las funciones
@@ -323,7 +330,7 @@ int generar_ArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigne
     if (archSalida == NULL)
     {
         printf("No se pudo crear %s\n", nombreSalida);
-        liberarMatriz(matriz,reg->ancho,reg->alto);
+        liberarMatriz(matriz,&reg->ancho,&reg->alto);
         return 1;
     }
 
@@ -336,21 +343,21 @@ int generar_ArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigne
     fputc(reg->letra1, archSalida);
     fputc(reg->letra2, archSalida);
 
-    fwrite(tamArchivo, 4, 1, archSalida);
+    fwrite(&tamArchivo, 4, 1, archSalida);
     //fwrite(reg.reservado1, 2, 1, archSalida);
     //fwrite(reg.reservado2, 2, 1, archSalida);
-    fwrite(reg->inicio_datos_imagen, 4, 1, archSalida);
+    fwrite(&reg->inicio_datos_imagen, 4, 1, archSalida);
     fwrite(&tamCabecera, 4, 1, archSalida);
-    fwrite(reg->ancho, 4, 1, archSalida);
-    fwrite(reg->alto, 4, 1, archSalida);
-    fwrite(reg->nro_planos, 2, 1, archSalida);
-    fwrite(reg->tamanio_punto, 2, 1, archSalida);
-    fwrite(reg->compresion, 4, 1, archSalida);
-    fwrite(reg->tamanio_imagen, 4, 1, archSalida);
-    fwrite(reg->resolucion_horizontal, 4, 1, archSalida);
-    fwrite(reg->resolucion_vertical, 4, 1, archSalida);
-    fwrite(reg->tamanio_tabla_color, 4, 1, archSalida);
-    fwrite(reg->contador_colores_importantes, 4, 1, archSalida);
+    fwrite(&reg->ancho, 4, 1, archSalida);
+    fwrite(&reg->alto, 4, 1, archSalida);
+    fwrite(&reg->nro_planos, 2, 1, archSalida);
+    fwrite(&reg->tamanio_punto, 2, 1, archSalida);
+    fwrite(&reg->compresion, 4, 1, archSalida);
+    fwrite(&reg->tamanio_imagen, 4, 1, archSalida);
+    fwrite(&reg->resolucion_horizontal, 4, 1, archSalida);
+    fwrite(&reg->resolucion_vertical, 4, 1, archSalida);
+    fwrite(&reg->tamanio_tabla_color, 4, 1, archSalida);
+    fwrite(&reg->contador_colores_importantes, 4, 1, archSalida);
 
 
     /*
