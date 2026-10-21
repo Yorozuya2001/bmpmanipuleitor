@@ -1,7 +1,5 @@
 #include "funciones_rosales.h"
 #include "funciones_viegas.h"
-#include <stdlib.h>
-
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
 {
    int i, j;
@@ -47,13 +45,38 @@ void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent)
 
 }
 
-void recortarImagen(int* ancho,int* alto,int* padding,int* porcent)
+unsigned char ***recortarImagen(unsigned char ***matriz,int* ancho,int* alto,int* padding,int* porcent)
 {
+    int anchoOrig = *ancho;
+    int altoOrig = *alto;
+    int anchoNuevo = anchoOrig * (*porcent) / 100;
+    int altoNuevo = altoOrig * (*porcent) / 100;
+    int i, j;
 
-    *ancho = *ancho * (*porcent);
-    *alto = *alto * (*porcent);
+    if (anchoNuevo < 1)
+        anchoNuevo = 1;
+    if (altoNuevo < 1)
+        altoNuevo = 1;
 
-    *padding = (4 - (*ancho * 3) % 4) % 4;
+    unsigned char ***nueva_matriz = reservarMatriz(anchoNuevo, altoNuevo);
+
+    for (i = 0; i < altoNuevo; i++)
+    {
+        for (j = 0; j < anchoNuevo; j++)
+        {
+            nueva_matriz[i][j][0] = matriz[i][j][0];
+            nueva_matriz[i][j][1] = matriz[i][j][1];
+            nueva_matriz[i][j][2] = matriz[i][j][2];
+        }
+    }
+
+    liberarMatriz(matriz, &anchoOrig, &altoOrig);
+
+    *ancho = anchoNuevo;
+    *alto = altoNuevo;
+    *padding = (4 - (anchoNuevo * 3) % 4) % 4;
+
+    return nueva_matriz;
 }
 
 ///Deberá reescribir todos los pixeles, para que se ubiquen dentro de un marco determinado
@@ -64,8 +87,13 @@ unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,in
 
    int anchoOrig = *ancho;
    int altoOrig  = *alto;
-   int anchoRed = anchoOrig * (*porcent);
-   int altoRed  = altoOrig  * (*porcent);
+   int anchoRed = anchoOrig * (*porcent) / 100;
+   int altoRed  = altoOrig  * (*porcent) / 100;
+
+    if (anchoRed < 1)
+        anchoRed = 1;
+    if (altoRed < 1)
+        altoRed = 1;
 
     unsigned char ***nueva_matriz = reservarMatriz(anchoRed,altoRed);
 

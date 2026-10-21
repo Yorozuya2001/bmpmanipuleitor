@@ -9,7 +9,7 @@
 
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent);
 void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent);
-void recortarImagen(int* ancho,int* alto,int* padding,int* porcent);
+unsigned char ***recortarImagen(unsigned char ***matriz,int* ancho,int* alto,int* padding,int* porcent);
 unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,int* porcent);
 
 

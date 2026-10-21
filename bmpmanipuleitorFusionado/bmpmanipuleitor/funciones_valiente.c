@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "funciones_viegas.h"
+#include <stddef.h>
 
 void modificarContraste(unsigned char ***matriz, int ancho, int alto,int porcentaje)
 {

@@ -17,7 +17,7 @@
  //   unsigned short profundidad;
 //}t_metadata;
 
-struct imagen
+typedef struct Imagen
 {
     char letra1;
     char letra2;
@@ -36,7 +36,7 @@ struct imagen
     int resolucion_vertical;
     int tamanio_tabla_color;
     int contador_colores_importantes;
-};
+} Imagen;
 
 
 

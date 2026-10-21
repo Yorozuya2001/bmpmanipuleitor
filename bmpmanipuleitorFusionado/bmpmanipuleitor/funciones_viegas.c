@@ -1,7 +1,7 @@
 
 // #include "funciones_viegas.h"
 #include <stdio.h>
- #include <stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 #define GRUPO "GRUPO"
 

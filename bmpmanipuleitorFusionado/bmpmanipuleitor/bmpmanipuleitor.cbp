@@ -40,6 +40,7 @@
 		</Unit>
 		<Unit filename="compartido.h" />
 		<Unit filename="estructuras.h" />
+		<Unit filename="filtros.h" />
 		<Unit filename="funciones_bustillos.c">
 			<Option compilerVar="CC" />
 		</Unit>
