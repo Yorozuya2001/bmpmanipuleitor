@@ -31,15 +31,30 @@
 
 int main(int argc, char* argv[])
 {
+    
     //-------------------------------------------------------------- 
     // Variables
 
     FILE *archBMP;
+
+    FILE *archBMP2;
+
     FILE *archSalida;
+
     Imagen regArch;
+
+    Imagen regArch2;
+
     //Imagen regSalida;
+
     unsigned char ***matriz;
-    int inicioDatos,ancho,alto,tamPunto;
+
+    unsigned char ***matriz2;
+
+    int inicioDatosImg1,anchoImg1,altoImg1,tamPuntoImg1;
+
+    int inicioDatosImg2,anchoImg2,altoImg2,tamPuntoImg2;
+
     //unsigned char ***matRed;
     char nombreSalida[500];
     char* p_nombreSalida=nombreSalida;
@@ -50,17 +65,18 @@ int main(int argc, char* argv[])
 
     //Variables para argumentos
     int cantidadDeArgumentos = argc;
-
     char* filtro = argv[1];
-
     char* pathImagen1 = argv[2];
+    char* pathImagen2 = argv[3];
 
 
     //-----------------------------------------------------------------------------------
     // Validacion de parametros
 
-    if (validarParametros(&cantidadDeArgumentos, filtro, pathImagen1) != TODO_OK){
-        return 1;
+    int esConcatenar = 0;
+
+    if (validarParametros(&cantidadDeArgumentos, filtro, pathImagen1, &esConcatenar) != TODO_OK){
+        return FALLA;
     }
 
     //-----------------------------------------------------------------------------------
@@ -69,21 +85,43 @@ int main(int argc, char* argv[])
 
     if (archBMP == NULL) {
         printf("No pudo abrir el archivo\n");
-        return 0;
+        return FALLA;
     }
 
-    matriz = leerBMP(pathImagen1,&regArch,&inicioDatos,&ancho,&alto,&tamPunto,archBMP);
+    matriz = leerBMP(pathImagen1,&regArch,&inicioDatosImg1,&anchoImg1,&altoImg1,&tamPuntoImg1,archBMP);
 
     if(!matriz){
         printf("No se genero la matriz correctamente\n");
         return 0;
     }
+    
+    //-----------------------------------------------------------------------------------
+    // Comprobacion de esConcatenar y apertura de archivo2
+
+    if (esConcatenar)
+    {
+        archBMP2=abrirArchivo(pathImagen2,"rb");
+
+        if (archBMP2 == NULL) {
+            printf("No pudo abrir el archivo\n");
+            return 0;
+        }
+
+        matriz2 = leerBMP(pathImagen2,&regArch2,&inicioDatosImg2,&anchoImg2,&altoImg2,&tamPuntoImg2,archBMP2);
+
+        if (matriz2 == NULL)
+        {
+            liberarMatriz(matriz2, &regArch2.ancho, &regArch2.alto);
+            return 0;
+        }
+    }
+
 
     //-----------------------------------------------------------------------------------
     // Aplicar filtro
-    matriz = aplicarFiltro(matriz,filtro,&ancho,&alto,&padding);
-    regArch.ancho = ancho;
-    regArch.alto  = alto;
+    matriz = aplicarFiltro(matriz,filtro,&anchoImg1,&altoImg1,&padding, matriz2, &anchoImg2, &altoImg2);
+    regArch.ancho = anchoImg1;
+    regArch.alto  = altoImg1;
 
 
     //-----------------------------------------------------------------------------------

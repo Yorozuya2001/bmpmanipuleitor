@@ -12,7 +12,7 @@
 
 
 ///Funcion de validacion de Parametros
-int validarParametros(int* argc,const char* filtro,const char* pathImagen);
+int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *esConcatenar);
 
 
 ///Funciones extras que se invocan desde la solucion
@@ -47,7 +47,7 @@ int validarProfundidad(FILE* archBMP,int* tamPunto);
 
 ///Funciones de procesamiento de imagenes
 int cargarImagenMatriz(FILE* archBMP,unsigned char*** matriz,int* inicioDatos,int* ancho,int* alto);///Carga pixeles de la imagen en matriz dinamica
-unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding);
+unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding,unsigned char*** matriz2,int* anchoImg2, int* altoImg2);
 int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned char*** matriz,int* padding,Imagen* reg);
 
 //Funcion para leer archivos BMP

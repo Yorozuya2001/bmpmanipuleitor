@@ -18,3 +18,6 @@ GRUPO_*.bmp
 .DS_Store
 Thumbs.db
 Trabajo Práctico 2026-2c LUNES.pdf
+
+# Backup
+funciones_grupo_backup.c

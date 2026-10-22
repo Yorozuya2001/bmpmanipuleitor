@@ -4,14 +4,16 @@
 #include "funciones_viegas.h"
 #include "funciones_rosales.h"
 #include "funciones_valiente.h"
+#include "funciones_bustillos.h"
 
 
 
-int validarParametros(int* argc,const char* filtro,const char* pathImagen)
+int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *esConcatenar)
 {
     // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
     // argv [1] = filtro                  -->  --negativo
-    // argv [2] = nombre de la imagne     -->  359.bmp
+    // argv [2] = nombre de la imagen 1   -->  <img1>.bmp
+    // argv [2] = nombre de la imagen 2   -->  <img2>.bmp
 
     int filtroAccedido=0;
     char nombreFiltro[50];
@@ -19,12 +21,17 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen)
     int i;
     int cantidadFiltros;
 
+    if ((*argc >= 2) && (strcmp(filtro, "--concatenar-horizontal") == 0 || strcmp(filtro, "--concatenar-vertical") == 0)) {
+        *esConcatenar = 1;
+    }
 
-    if (*argc <3)
+    if ((!*esConcatenar && *argc != 3) || (*esConcatenar && *argc != 4))
     {
         printf("Cantidad de parametros ingresados invalida\n");
         printf("Uso:\n");
         printf("bmpmanipuleitor.exe --filtro imagen.bmp\n");
+        printf("bmpmanipuleitor.exe --concatenar-horizontal imagen1.bmp imagen2.bmp\n");
+        printf("bmpmanipuleitor.exe --concatenar-vertical imagen1.bmp imagen2.bmp\n");
         return -1;
     }
 
@@ -45,6 +52,7 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen)
         FILTRO_ROTAR_IZQUIERDA,
         FILTRO_CONCATENAR_HORIZONTAL,
         FILTRO_CONCATENAR_VERTICAL,
+        FILTRO_COMODIN
     };
 
     if (strchr(filtro, '=') != NULL)
@@ -385,7 +393,7 @@ int cargarImagenMatriz(FILE* archBMP,unsigned char*** matriz,int* inicioDatos,in
 
 
 ///Menu de opciones que ejecuta las funcionalidades en base al filtro ingresado
-unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding)
+unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding,unsigned char*** matriz2,int* anchoImg2, int* altoImg2)
 {
 
     int porcentaje;
@@ -485,6 +493,31 @@ unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* a
         *alto  = w;
         liberarMatriz(matriz, &w, &h);
         return mat;
+    }
+    else if (strcmp(filtro, "--tonalidad-roja") == 0)
+    {
+        tonalidadRoja(matriz,*ancho,*alto);
+    }
+    else if (strcmp(filtro, "--comodin") == 0)
+    {
+        comodin(matriz,*ancho,*alto);
+    }
+    else if (strcmp(filtro, "--concatenar-horizontal") == 0)
+    {
+        //Creo una nueva matriz con las dimisiones de las 2 imagenes
+        matriz = concatenarHorizontal(matriz, ancho, alto, matriz2, *anchoImg2, *altoImg2);
+
+        // Libero la memoria que ya no uso
+        liberarMatriz(matriz2, anchoImg2, altoImg2);
+
+    }
+    else if (strcmp(filtro, "--concatenar-vertical") == 0)
+    {
+        //Creo una nueva matriz con las dimisiones de las 2 imagenes
+        matriz = concatenarVertical(matriz, ancho, alto, matriz2, *anchoImg2, *altoImg2);
+        //Libero la meme que ya no uso
+        liberarMatriz(matriz2, anchoImg2,altoImg2);
+
     }
 
     return matriz;
