@@ -50,7 +50,8 @@ int cargarImagenMatriz(FILE* archBMP,unsigned char*** matriz,int* inicioDatos,in
 unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding);
 int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned char*** matriz,int* padding,Imagen* reg);
 
-
+//Funcion para leer archivos BMP
+unsigned char ***leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDatos,int *ancho,int *alto,int *tamPunto,FILE *archBMP);
 
 
 

@@ -31,12 +31,12 @@
 
 int main(int argc, char* argv[])
 {
-    /*-------------------------------------------------------------- */
-    /* Variables*/
+    //-------------------------------------------------------------- 
+    // Variables
 
     FILE *archBMP;
     FILE *archSalida;
-     Imagen regArch;
+    Imagen regArch;
     //Imagen regSalida;
     unsigned char ***matriz;
     int inicioDatos,ancho,alto,tamPunto;
@@ -46,99 +46,49 @@ int main(int argc, char* argv[])
     int padding;
     //unsigned char *datosExtra;
     //int tamanioExtra;
-    
-    
+
+
+    //Variables para argumentos
+    int cantidadDeArgumentos = argc;
+
+    char* filtro = argv[1];
+
+    char* pathImagen1 = argv[2];
+
+
     //-----------------------------------------------------------------------------------
     // Validacion de parametros
 
-    if (validarParametros(&argc, argv[1], argv[2]) != TODO_OK){
+    if (validarParametros(&cantidadDeArgumentos, filtro, pathImagen1) != TODO_OK){
         return 1;
     }
-    ///Apertura de Archivo
-    archBMP=abrirArchivo(argv[2],"rb");
-    if (archBMP == NULL)
-        return 1;
-    
-    // Obtengo el tamnio del archivo
-    obtenerTamArchivo(archBMP, &regArch);
-
-    // Obtengo el primer campo reservado
-    obtenerPrimerReservado(archBMP, &regArch);
-    
-    // Obtengo el segundo campo reservado
-    obtenerSegundoReservado(archBMP, &regArch);
-
-    // Obtengo inicio de datos de la imagen
-    inicioDatos = obtenerInicioDatos(archBMP, &regArch);
-    
-    // Obtengo tamanio de la cabecera
-    obtenerTamCabecera(archBMP, &regArch);
-
-    // Obtengo ancho
-    ancho = obtenerAncho(archBMP, &regArch);
-    
-    // Obtengo alto
-    alto = obtenerAlto(archBMP, &regArch);
-    
-    // Obtengo nro de planos
-    obtenerNroPlanos(archBMP, &regArch);
-    
-    // Obtengo tamanio de cada punto
-    tamPunto = obtenerTamPixeles(archBMP, &regArch);
-    
-    // Obtengo compresion
-    obtenerCompresion(archBMP, &regArch);
-    
-    // Obtengo tamanio de la imagen
-    obtenerTamImagen(archBMP, &regArch);
-    
-    // Obtengo resolucion horizontal
-    obtenerResolHorizontal(archBMP, &regArch);
-    
-    // Obtengo resolucion vertical
-    obtenerResolVertical(archBMP, &regArch);
-
-    //Obtengo tamanio de la tabla de color
-    obtenerTamTablaColor(archBMP, &regArch);
-
-    // Obtengo contaodr de colores importantes
-    obtenerContColorImportantes(archBMP, &regArch);
-    regArch.letra1 = 'B';
-    regArch.letra2 = 'M';
-    
-    
-    //-----------------------------------------------------------------------------------
-    // Bytes adicionales entre el final de la cabecera y el comienzo d elos pixeles
-    validarCabecera(archBMP,&inicioDatos);
 
     //-----------------------------------------------------------------------------------
-    // Validacion BMP 24 BITS
-    validarProfundidad(archBMP,&tamPunto);
-   
-    //-----------------------------------------------------------------------------------
-    // Reservo memoria para la matriz que va a almacenar la imagen 
-    matriz = reservarMatriz(regArch.ancho, regArch.alto);
-    
+    //Apertura de Archivo1
+    archBMP=abrirArchivo(pathImagen1,"rb");
+
+    if (archBMP == NULL) {
+        printf("No pudo abrir el archivo\n");
+        return 0;
+    }
+
+    matriz = leerBMP(pathImagen1,&regArch,&inicioDatos,&ancho,&alto,&tamPunto,archBMP);
+
     if(!matriz){
-        printf("No se pudo reservar memoria.\n");
-        fclose(archBMP);
-        return 1;
+        printf("No se genero la matriz correctamente\n");
+        return 0;
     }
-  
-    //-----------------------------------------------------------------------------------
-    // Leer los pixeles y cargar
-    cargarImagenMatriz(archBMP,matriz,&inicioDatos,&ancho,&alto);
 
     //-----------------------------------------------------------------------------------
     // Aplicar filtro
-    matriz = aplicarFiltro(matriz,argv[1],&ancho,&alto,&padding);
+    matriz = aplicarFiltro(matriz,filtro,&ancho,&alto,&padding);
     regArch.ancho = ancho;
     regArch.alto  = alto;
 
 
     //-----------------------------------------------------------------------------------
     // Crear nombre del archivo de salida
-    p_nombreSalida=crearNombreSalida(nombreSalida, argv[1] + 2, argv[2]);
+    p_nombreSalida=crearNombreSalida(nombreSalida, filtro + 2, pathImagen1);
     archSalida = fopen(p_nombreSalida, "wb");
     if (archSalida == NULL)
         return 1;

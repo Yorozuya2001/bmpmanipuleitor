@@ -12,7 +12,7 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen)
     // argv [0] = nombre del archivo .exe -->  bmpmanipuleitor.exe
     // argv [1] = filtro                  -->  --negativo
     // argv [2] = nombre de la imagne     -->  359.bmp
-  
+
     int filtroAccedido=0;
     char nombreFiltro[50];
     int porcentaje;
@@ -516,7 +516,7 @@ int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned
     tamImagen = (reg->ancho * 3 + *padding) * reg->alto;
     tamArchivo = inicioDatos + tamImagen;
 
-   
+
     reg->letra1 = 'B';
     reg->letra2 = 'M';
     reg->tamanio_archivo = tamArchivo;
@@ -549,7 +549,7 @@ int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned
     fwrite(&reg->tamanio_tabla_color, 4, 1, archSalida);
     fwrite(&reg->contador_colores_importantes, 4, 1, archSalida);
 
- 
+
     /*LA NUEVA IMAGEN CON EL FILTRO APLICADO (ESCRIBIR PIXELES)*/
     for (int i = reg->alto - 1; i >= 0; i--)
     {
@@ -569,3 +569,75 @@ int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned
     return TODO_OK;
 }
 
+unsigned char ***leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDatos,int *ancho,int *alto,int *tamPunto,FILE *archBMP)
+{
+    unsigned char ***matriz;
+
+    // Obtengo el tamnio del archivo
+    obtenerTamArchivo(archBMP, regArch);
+
+    // Obtengo el primer campo reservado
+    obtenerPrimerReservado(archBMP, regArch);
+
+    // Obtengo el segundo campo reservado
+    obtenerSegundoReservado(archBMP, regArch);
+
+    // Obtengo inicio de datos de la imagen
+    *(inicioDatos) = obtenerInicioDatos(archBMP, regArch);
+
+    // Obtengo tamanio de la cabecera
+    obtenerTamCabecera(archBMP, regArch);
+
+    // Obtengo ancho
+    *(ancho) = obtenerAncho(archBMP, regArch);
+
+    // Obtengo alto
+    *(alto) = obtenerAlto(archBMP, regArch);
+
+    // Obtengo nro de planos
+    obtenerNroPlanos(archBMP, regArch);
+
+    // Obtengo tamanio de cada punto
+    *(tamPunto) = obtenerTamPixeles(archBMP, regArch);
+
+    // Obtengo compresion
+    obtenerCompresion(archBMP, regArch);
+
+    // Obtengo tamanio de la imagen
+    obtenerTamImagen(archBMP, regArch);
+
+    // Obtengo resolucion horizontal
+    obtenerResolHorizontal(archBMP, regArch);
+
+    // Obtengo resolucion vertical
+    obtenerResolVertical(archBMP, regArch);
+
+    //Obtengo tamanio de la tabla de color
+    obtenerTamTablaColor(archBMP, regArch);
+
+    // Obtengo contaodr de colores importantes
+    obtenerContColorImportantes(archBMP, regArch);
+
+    regArch->letra1 = 'B';
+    regArch->letra2 = 'M';
+
+    // Bytes adicionales entre el final de la cabecera y el comienzo d elos pixeles
+    validarCabecera(archBMP,inicioDatos);
+
+    // Validacion BMP 24 BITS
+    validarProfundidad(archBMP,tamPunto);
+
+    matriz = reservarMatriz(regArch->ancho, regArch->alto);
+
+    if(!matriz){
+        printf("No se pudo reservar memoria.\n");
+        fclose(archBMP);
+        matriz = NULL;
+        return matriz;
+    }
+
+    // Leer los pixeles y cargar
+    cargarImagenMatriz(archBMP,matriz,inicioDatos,ancho,alto);
+
+    return matriz;
+}

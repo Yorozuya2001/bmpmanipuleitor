@@ -15,6 +15,7 @@
 #define FILTRO_ROTAR_IZQUIERDA "--rotar-izquierda"
 #define FILTRO_CONCATENAR_HORIZONTAL "--concatenar-horizontal"
 #define FILTRO_CONCATENAR_VERTICAL "--concatenar-vertical"
+#define FILTRO_COMODIN "--comodin"
 
 /* Filtros que pueden venir como --nombre=porcentaje */
 #define FILTRO_AUMENTAR_CONTRASTE "--aumentar-contraste"
