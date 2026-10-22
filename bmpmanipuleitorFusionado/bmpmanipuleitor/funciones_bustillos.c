@@ -1,7 +1,10 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "funciones_bustillos.h"
 #include "estructuras.h"
 #include "funciones_viegas.h"
-#include <stdlib.h>
+
 
 void tonalidadRoja(unsigned char ***matriz, int ancho, int alto)
 {
@@ -29,6 +32,38 @@ void tonalidadRoja(unsigned char ***matriz, int ancho, int alto)
     }
 }
 
+void comodin(unsigned char ***matriz, int ancho, int alto)
+{
+    int i,j;
+    int incremento_rojo,incremento_azul,incremento_verde;
+
+    for(i=0;i<alto;i++){
+        for(j=0;j<ancho;j++) {
+
+            /*
+                matriz[i][j][0] = B
+                matriz[i][j][1] = G
+                matriz[i][j][2] = R
+            */
+
+            // Modifico cada componente para obtener el tono sepia
+            incremento_azul = (matriz[i][j][0] * COMODIN_INCREMENTO_AZUL_AZUL) + (matriz[i][j][1] * COMODIN_INCREMENTO_AZUL_VERDE) + (matriz[i][j][2] * COMODIN_INCREMENTO_AZUL_ROJO);
+            incremento_verde = (matriz[i][j][0] * COMODIN_INCREMENTO_VERDE_AZUL) + (matriz[i][j][1] * COMODIN_INCREMENTO_VERDE_VERDE) + (matriz[i][j][2] * COMODIN_INCREMENTO_VERDE_ROJO);
+            incremento_rojo = (matriz[i][j][0] * COMODIN_INCREMENTO_ROJO_AZUL) + (matriz[i][j][1] * COMODIN_INCREMENTO_ROJO_VERDE) + (matriz[i][j][2] * COMODIN_INCREMENTO_ROJO_ROJO);
+
+            // Verifico que no me este pasando de 255
+            incremento_azul = incremento_azul > 255 ? 255 : incremento_azul;
+            incremento_verde = incremento_verde > 255 ? 255 : incremento_verde;
+            incremento_rojo = incremento_rojo > 255 ? 255 : incremento_rojo;
+
+            matriz[i][j][0] = incremento_azul;
+            matriz[i][j][1] = incremento_verde;
+            matriz[i][j][2] = incremento_rojo;
+        }
+        
+    }
+    
+}
 
 
 unsigned char ***concatenarHorizontal( unsigned char ***img1, int *ancho1, int *alto1, unsigned char ***img2, int ancho2, int alto2)
@@ -121,24 +156,4 @@ unsigned char ***concatenarVertical(
     return salida;
 }
 
-void comodin(unsigned char ***matriz, int ancho, int alto)
-{
-    int i, j, k;
-    int brillo;
 
-    for (i = 0; i < alto; i++)
-    {
-        for (j = 0; j < ancho; j++)
-        {
-            for (k = 0; k < 3; k++)
-            {
-                brillo = matriz[i][j][k] * INCREMETO_BRILLO;
-
-                if (brillo > 255)
-                    brillo = 255;
-
-                matriz[i][j][k] = brillo;
-            }
-        }
-    }
-}
