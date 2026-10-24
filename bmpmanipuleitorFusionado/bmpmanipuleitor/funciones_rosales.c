@@ -1,5 +1,5 @@
 #include "funciones_rosales.h"
-#include "funciones_viegas.h"
+#include "compartido.h"
 
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
 {
@@ -17,6 +17,11 @@ void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
             */
 
             incremento = matriz[i][j][0] + ((float)*(porcent) / 100) * matriz[i][j][0];
+
+            if (incremento > 255)
+            {
+                incremento = 255;
+            }
 
             matriz[i][j][0] = incremento;
         }
@@ -39,6 +44,11 @@ void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent)
             */
 
             incremento = matriz[i][j][1] + ((float)*(porcent) / 100) * matriz[i][j][1];
+
+            if (incremento > 255)
+            {
+                incremento = 255;
+            }
 
             matriz[i][j][1] = incremento;
         }
