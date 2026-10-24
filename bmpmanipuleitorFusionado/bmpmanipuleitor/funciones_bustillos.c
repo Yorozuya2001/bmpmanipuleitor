@@ -6,10 +6,10 @@
 #include "funciones_viegas.h"
 
 
-void tonalidadRoja(unsigned char ***matriz, int ancho, int alto)
+void tonalidadRoja(unsigned char ***matriz, int ancho, int alto, int *porcent)
 {
-   int i, j;
-   int incremento;
+    int i, j;
+    int incremento;
 
     for (i = 0; i < alto; i++)
     {
@@ -21,13 +21,14 @@ void tonalidadRoja(unsigned char ***matriz, int ancho, int alto)
                 matriz[i][j][2] = R
             */
 
-            incremento = matriz[i][j][2] + INCREMETO_ROJO * matriz[i][j][2];
+            incremento = matriz[i][j][2] + *porcent * matriz[i][j][2];
+
             if (incremento > 255)
             {
                 incremento = 255;
             }
 
-            matriz[i][j][2] = incremento;
+            matriz[i][j][2] = (unsigned char)incremento;
         }
     }
 }

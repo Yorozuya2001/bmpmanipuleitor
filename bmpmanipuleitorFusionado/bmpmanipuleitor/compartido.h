@@ -3,7 +3,22 @@
 #include <stdio.h>
 #include "filtros.h"
 #include "estructuras.h"
-#include "errores.h"
+
+#define TODO_OK                 0
+#define SIN_MEMORIA            -1
+#define ARGUMENTO_INVALIDO     -2
+#define ERROR_EXTENSION        -3
+#define ARCHIVO_NO_BMP         -4
+#define FILTRO_NO_RECONOCIDO   -5
+#define PORCENTAJE_INVALIDO    -6
+#define PROFUNDIDAD_INVALIDA   -7
+#define ERROR_ABRIR_ARCHIVO    -8
+#define CABECERA_INVALIDA      -9
+#define ERROR_LECTURA_ARCHIVO -10
+#define ERROR_CARGA_IMAGEN    -11
+
+void mostrarError(int codigo);
+int salirConError(int codigo);
 
 ///Definimos estos valores
 //#define 1 --negativo

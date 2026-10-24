@@ -62,7 +62,7 @@ void mostrarError(int codigo)
         default:
             printf("Error desconocido (codigo %d).\n", codigo);
             break;
-            
+
     }
 }
 

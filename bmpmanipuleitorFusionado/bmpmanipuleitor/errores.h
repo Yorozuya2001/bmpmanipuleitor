@@ -13,7 +13,7 @@
 #define ERROR_ABRIR_ARCHIVO    -8   /* fopen falló */
 #define CABECERA_INVALIDA      -9   /* cabecera BMP inconsistente */
 #define ERROR_LECTURA_ARCHIVO -10   /* fread / lectura incompleta */
-#define ERROR_CARGA_IMAGEN    -11  
+#define ERROR_CARGA_IMAGEN    -11
 
 
 void mostrarError(int codigo);

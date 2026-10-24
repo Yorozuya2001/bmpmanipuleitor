@@ -1,35 +1,7 @@
 
-/*
-    Integrantes del grupo. En caso de ser un grupo de dos integrantes, no completar el último campo.
-    Si alguno de los integrantes del grupo dejara la materia, completar de todos modos sus datos, aclarando que no entrega.
-    -----------------
-    Apellido: Bustillos
-    Nombre: Juan Ignacio
-    DNI: 46876304
-    Entrega: Sí
-    -----------------
-    Apellido:Rosales
-    Nombre: Gustavo Mauricio
-    DNI: 43665940
-    Entrega:Sí
-    -----------------
-    Apellido: Valiente
-    Nombre: Axel Ariel
-    DNI: 43202499
-    Entrega: Sí
-    -----------------
-	Apellido: Viegas
-    Nombre: Chloe Jacqueline Micol
-    DNI: 35361882
-    Entrega: Sí
-    -----------------
-*/
 #include "funciones_grupo.h"
 
-
-
-
-int main(int argc, char* argv[])
+int solucion(int argc, char* argv[])
 {
     
     //-------------------------------------------------------------- 
