@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define GRUPO "GRUPO"
+#define GRUPO "MATRICERO"
 
 void liberarMatriz(unsigned char ***matriz, int* ancho, int* alto)
 {

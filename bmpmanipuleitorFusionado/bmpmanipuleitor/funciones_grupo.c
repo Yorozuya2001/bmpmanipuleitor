@@ -1,55 +1,29 @@
 
-/*
-    Integrantes del grupo. En caso de ser un grupo de dos integrantes, no completar el último campo.
-    Si alguno de los integrantes del grupo dejara la materia, completar de todos modos sus datos, aclarando que no entrega.
-    -----------------
-    Apellido: Bustillos
-    Nombre: Juan Ignacio
-    DNI: 46876304
-    Entrega: Sí
-    -----------------
-    Apellido:Rosales
-    Nombre: Gustavo Mauricio
-    DNI: 43665940
-    Entrega:Sí
-    -----------------
-    Apellido: Valiente
-    Nombre: Axel Ariel
-    DNI: 43202499
-    Entrega: Sí
-    -----------------
-	Apellido: Viegas
-    Nombre: Chloe Jacqueline Micol
-    DNI: 35361882
-    Entrega: Sí
-    -----------------
-*/
 #include "funciones_grupo.h"
 
-
-
-
-int main(int argc, char* argv[])
+int solucion(int argc, char* argv[])
 {
     
     //-------------------------------------------------------------- 
     // Variables
 
-    FILE *archBMP;
+    FILE *archBMP = NULL;
 
-    FILE *archBMP2;
+    FILE *archBMP2 = NULL;
 
-    FILE *archSalida;
+    FILE *archSalida = NULL;
 
     Imagen regArch;
 
     Imagen regArch2;
 
+    int codigo = TODO_OK;
+
     //Imagen regSalida;
 
-    unsigned char ***matriz;
+    unsigned char ***matriz = NULL;
 
-    unsigned char ***matriz2;
+    unsigned char ***matriz2 = NULL;
 
     int inicioDatosImg1,anchoImg1,altoImg1,tamPuntoImg1;
 
@@ -75,24 +49,33 @@ int main(int argc, char* argv[])
 
     int esConcatenar = 0;
 
-    if (validarParametros(&cantidadDeArgumentos, filtro, pathImagen1, &esConcatenar) != TODO_OK){
-        return FALLA;
+    codigo = validarParametros(&cantidadDeArgumentos, filtro, pathImagen1, &esConcatenar);
+
+    if (codigo != TODO_OK)
+    {
+        return salirConError(codigo);
     }
 
     //-----------------------------------------------------------------------------------
     //Apertura de Archivo1
-    archBMP=abrirArchivo(pathImagen1,"rb");
+    codigo = abrirArchivo(pathImagen1, "rb", &archBMP);
 
-    if (archBMP == NULL) {
-        printf("No pudo abrir el archivo\n");
-        return FALLA;
+    if (codigo != TODO_OK)
+    {
+        return salirConError(codigo);
     }
 
-    matriz = leerBMP(pathImagen1,&regArch,&inicioDatosImg1,&anchoImg1,&altoImg1,&tamPuntoImg1,archBMP);
+    matriz = NULL;
+    codigo = leerBMP(pathImagen1, &regArch, &inicioDatosImg1, &anchoImg1, &altoImg1,
+                     &tamPuntoImg1, archBMP, &matriz);
 
-    if(!matriz){
-        printf("No se genero la matriz correctamente\n");
-        return 0;
+    if (codigo != TODO_OK)
+    {
+        if (matriz != NULL)
+        {
+            liberarMatriz(matriz, &anchoImg1, &altoImg1);
+        }
+        return salirConError(codigo);
     }
     
     //-----------------------------------------------------------------------------------
@@ -100,19 +83,28 @@ int main(int argc, char* argv[])
 
     if (esConcatenar)
     {
-        archBMP2=abrirArchivo(pathImagen2,"rb");
+        codigo = abrirArchivo(pathImagen2, "rb", &archBMP2);
 
-        if (archBMP2 == NULL) {
-            printf("No pudo abrir el archivo\n");
-            return 0;
+        if (codigo != TODO_OK)
+        {
+            liberarMatriz(matriz, &anchoImg1, &altoImg1);
+            fclose(archBMP);
+            return salirConError(codigo);
         }
 
-        matriz2 = leerBMP(pathImagen2,&regArch2,&inicioDatosImg2,&anchoImg2,&altoImg2,&tamPuntoImg2,archBMP2);
+        matriz2 = NULL;
+        codigo = leerBMP(pathImagen2, &regArch2, &inicioDatosImg2, &anchoImg2, &altoImg2,
+                         &tamPuntoImg2, archBMP2, &matriz2);
 
-        if (matriz2 == NULL)
+        if (codigo != TODO_OK)
         {
-            liberarMatriz(matriz2, &regArch2.ancho, &regArch2.alto);
-            return 0;
+            if (matriz2 != NULL)
+            {
+                liberarMatriz(matriz2, &anchoImg2, &altoImg2);
+            }
+            liberarMatriz(matriz, &anchoImg1, &altoImg1);
+            fclose(archBMP);
+            return salirConError(codigo);
         }
     }
 
@@ -129,16 +121,43 @@ int main(int argc, char* argv[])
     p_nombreSalida=crearNombreSalida(nombreSalida, filtro + 2, pathImagen1);
     archSalida = fopen(p_nombreSalida, "wb");
     if (archSalida == NULL)
-        return 1;
+    {
+        liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
+        fclose(archBMP);
+        if (archBMP2 != NULL)
+        {
+            fclose(archBMP2);
+        }
+        return salirConError(ERROR_ABRIR_ARCHIVO);
+    }
 
 
     //-----------------------------------------------------------------------------------
     // Crear archivo de salida
-    generarArchSalida(nombreSalida,archBMP,archSalida,matriz,&padding,&regArch);
+    codigo = generarArchSalida(nombreSalida,archBMP,archSalida,matriz,&padding,&regArch);
+
+    if (codigo != TODO_OK)
+    {
+        fclose(archSalida);
+        liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
+        fclose(archBMP);
+        if (archBMP2 != NULL)
+        {
+            fclose(archBMP2);
+        }
+        return salirConError(codigo);
+    }
+
     fclose(archBMP);
+
     //free(datosExtra);
+    if (archBMP2 != NULL)
+    {
+        fclose(archBMP2);
+    }
+
     liberarMatriz(matriz, &regArch.ancho, &regArch.alto);
     fclose(archSalida);
     printf("Archivo generado correctamente: %s\n", nombreSalida);
-    return 0;
+    return TODO_OK;
 }

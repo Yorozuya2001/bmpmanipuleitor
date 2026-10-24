@@ -6,7 +6,38 @@
 #include "funciones_valiente.h"
 #include "funciones_bustillos.h"
 
-
+static int filtroLlevaPorcentaje(const char *nombreFiltro)
+{
+    if (strcmp(nombreFiltro, FILTRO_AUMENTAR_CONTRASTE) == 0)
+    {
+        return 1;
+    }
+    if (strcmp(nombreFiltro, FILTRO_REDUCIR_CONTRASTE) == 0)
+    {
+        return 1;
+    }
+    if (strcmp(nombreFiltro, FILTRO_TONALIDAD_AZUL) == 0)
+    {
+        return 1;
+    }
+    if (strcmp(nombreFiltro, FILTRO_TONALIDAD_ROJA) == 0)
+    {
+        return 1;
+    }
+    if (strcmp(nombreFiltro, FILTRO_TONALIDAD_VERDE) == 0)
+    {
+        return 1;
+    }
+    if (strcmp(nombreFiltro, FILTRO_RECORTAR) == 0)
+    {
+        return 1;
+    }
+    if (strcmp(nombreFiltro, FILTRO_ACHICAR) == 0)
+    {
+        return 1;
+    }
+    return 0;
+}
 
 int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *esConcatenar)
 {
@@ -17,9 +48,10 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *
 
     int filtroAccedido=0;
     char nombreFiltro[50];
-    int porcentaje;
+    int porcentaje = 0;
     int i;
     int cantidadFiltros;
+    int tieneIgual;
 
     if ((*argc >= 2) && (strcmp(filtro, "--concatenar-horizontal") == 0 || strcmp(filtro, "--concatenar-vertical") == 0)) {
         *esConcatenar = 1;
@@ -27,12 +59,8 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *
 
     if ((!*esConcatenar && *argc != 3) || (*esConcatenar && *argc != 4))
     {
-        printf("Cantidad de parametros ingresados invalida\n");
-        printf("Uso:\n");
-        printf("bmpmanipuleitor.exe --filtro imagen.bmp\n");
-        printf("bmpmanipuleitor.exe --concatenar-horizontal imagen1.bmp imagen2.bmp\n");
-        printf("bmpmanipuleitor.exe --concatenar-vertical imagen1.bmp imagen2.bmp\n");
-        return -1;
+
+        return ARGUMENTO_INVALIDO;
     }
 
     const char *listado_Funciones[] =
@@ -55,10 +83,23 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *
         FILTRO_COMODIN
     };
 
-    if (strchr(filtro, '=') != NULL)
-        sscanf(filtro, "%49[^=]=%d", nombreFiltro, &porcentaje);
+    tieneIgual = (strchr(filtro, '=') != NULL);
+
+    if (tieneIgual)
+    {
+        if (sscanf(filtro, "%49[^=]=%d", nombreFiltro, &porcentaje) != 2)
+        {
+            return ARGUMENTO_INVALIDO;
+        }
+        if (porcentaje < 0 || porcentaje > 100)
+        {
+            return PORCENTAJE_INVALIDO;
+        }
+    }
     else
+    {
         strcpy(nombreFiltro, filtro);
+    }
 
     ///Validar ingreso de filtro
     cantidadFiltros = (int)(sizeof(listado_Funciones) / sizeof(listado_Funciones[0]));
@@ -72,15 +113,18 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *
 
     if(filtroAccedido==0)
     {
-        printf("Filtro no reconocido");
-        return FALLA;
+        return FILTRO_NO_RECONOCIDO;
+    }
+
+    if (filtroLlevaPorcentaje(nombreFiltro) && !tieneIgual)
+    {
+        return ARGUMENTO_INVALIDO;
     }
 
     ///Validar extension de la imagen
     if(strstr(pathImagen,EXTENSION_BMP)==NULL)
     {
-        printf("Archivo ingresado invalido. Debe ser una imagen BMP");
-        return FALLA;
+        return  ERROR_EXTENSION;
 
     }
 
@@ -95,9 +139,8 @@ int validarCabecera(FILE* archBMP,int* inicioDatos)
 
     if (tamanioExtra < 0)
     {
-        printf("Cabecera BMP invalida.\n");
         fclose(archBMP);
-        return 1;
+        return CABECERA_INVALIDA;
     }
 
     datosExtra = NULL;
@@ -108,20 +151,19 @@ int validarCabecera(FILE* archBMP,int* inicioDatos)
 
         if (datosExtra == NULL)
         {
-            printf("No se pudo reservar memoria para la cabecera.\n");
             fclose(archBMP);
-            return 1;
+            return SIN_MEMORIA;
         }
 
         fseek(archBMP, 54, SEEK_SET);
 
-        if (fread(datosExtra, 1, tamanioExtra, archBMP) != tamanioExtra)
+        if (fread(datosExtra, 1, tamanioExtra, archBMP) != (size_t)tamanioExtra)
         {
-            printf("Error al leer los datos adicionales.\n");
             free(datosExtra);
             fclose(archBMP);
-            return FALLA;
+            return ERROR_LECTURA_ARCHIVO;
         }
+        free(datosExtra);
     }
 
     return TODO_OK;
@@ -131,39 +173,41 @@ int validarProfundidad(FILE* archBMP,int* tamPunto)
 {
     if (*tamPunto != 24)
     {
-        printf("El BMP debe ser de 24 bits.\n");
         fclose(archBMP);
-        return FALLA;
+        return PROFUNDIDAD_INVALIDA;
     }
 
     return TODO_OK;
 }
 
 
-FILE* abrirArchivo(char* nombreArchivo,const char* modoApertura)
+int abrirArchivo(char *nombreArchivo, const char *modoApertura, FILE **archivo)
 {
-    FILE* archivo = fopen(nombreArchivo,modoApertura);
-    Imagen regArch;
+    int c1;
+    int c2;
 
-    if (archivo == NULL)
+    *archivo = fopen(nombreArchivo, modoApertura);
+
+    if (*archivo == NULL)
     {
-        printf("No se pudo abrir el archivo %s\n",nombreArchivo);
+        return ERROR_ABRIR_ARCHIVO;
     }
-
 
     /* LEER CABECERA BMP */
 
     // Obtengo el tipo de archivo
-    regArch.letra1 = fgetc(archivo); ///Fgetc lee caracteres individualmente y devuelve un int como valor ASCII del caracter
-    regArch.letra2 = fgetc(archivo);
+    c1 = fgetc(*archivo); ///Fgetc lee caracteres individualmente y devuelve un int como valor ASCII del caracter
+    c2 = fgetc(*archivo);
 
-    if (regArch.letra1 != 'B' || regArch.letra2 != 'M')
+    if (c1 != 'B' || c2 != 'M')
     {
-        printf("El archivo no es un BMP valido.\n");
-        fclose(archivo);
+        fclose(*archivo);
+        *archivo = NULL;
+        return ARCHIVO_NO_BMP;
     }
 
-    return archivo;
+    rewind(*archivo);
+    return TODO_OK;
 }
 
 int obtenerTamArchivo(FILE* archBMP,Imagen* reg)
@@ -419,7 +463,7 @@ unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* a
         }
 
     }
-    printf("\n%s\n%s ----\n ",filtro,nombreFiltro);
+    //printf("\n%s\n%s ----\n ",filtro,nombreFiltro);
     if (strcmp(filtro, FILTRO_NEGATIVO) == 0)
     {
         negativo(matriz,*ancho,*alto);
@@ -446,6 +490,11 @@ unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* a
     else if (strcmp(nombreFiltro, FILTRO_TONALIDAD_VERDE) == 0)
     {
         tonalidadVerde(matriz,*ancho,*alto,&porcentaje);
+    }
+
+    else if (strcmp(nombreFiltro, FILTRO_TONALIDAD_ROJA) == 0)
+    {
+        tonalidadRoja(matriz, *ancho, *alto, &porcentaje);
     }
 
     else if (strcmp(nombreFiltro, FILTRO_RECORTAR) == 0)
@@ -494,10 +543,6 @@ unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* a
         liberarMatriz(matriz, &w, &h);
         return mat;
     }
-    else if (strcmp(filtro, "--tonalidad-roja") == 0)
-    {
-        tonalidadRoja(matriz,*ancho,*alto);
-    }
     else if (strcmp(filtro, "--comodin") == 0)
     {
         comodin(matriz,*ancho,*alto);
@@ -538,9 +583,8 @@ int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned
         archSalida = fopen(nombreSalida, "wb");
         if (archSalida == NULL)
         {
-            printf("No se pudo crear %s\n", nombreSalida);
             liberarMatriz(matriz,&reg->ancho,&reg->alto);
-            return 1;
+            return ERROR_ABRIR_ARCHIVO;
         }
     }
 
@@ -602,9 +646,14 @@ int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned
     return TODO_OK;
 }
 
-unsigned char ***leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDatos,int *ancho,int *alto,int *tamPunto,FILE *archBMP)
+int leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDatos, int *ancho, int *alto,
+            int *tamPunto, FILE *archBMP, unsigned char ****matriz)
 {
-    unsigned char ***matriz;
+    int codigo;
+
+    (void)nombreArch;
+
+    *matriz = NULL;
 
     // Obtengo el tamnio del archivo
     obtenerTamArchivo(archBMP, regArch);
@@ -655,22 +704,98 @@ unsigned char ***leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDat
     regArch->letra2 = 'M';
 
     // Bytes adicionales entre el final de la cabecera y el comienzo d elos pixeles
-    validarCabecera(archBMP,inicioDatos);
+    codigo = validarCabecera(archBMP, inicioDatos);
+    if (codigo != TODO_OK)
+    {
+        return codigo;
+    }
 
     // Validacion BMP 24 BITS
-    validarProfundidad(archBMP,tamPunto);
+    codigo = validarProfundidad(archBMP, tamPunto);
+    if (codigo != TODO_OK)
+    {
+        return codigo;
+    }
 
-    matriz = reservarMatriz(regArch->ancho, regArch->alto);
+    *matriz = reservarMatriz(regArch->ancho, regArch->alto);
 
-    if(!matriz){
-        printf("No se pudo reservar memoria.\n");
+    if (*matriz == NULL)
+    {
         fclose(archBMP);
-        matriz = NULL;
-        return matriz;
+        return SIN_MEMORIA;
     }
 
     // Leer los pixeles y cargar
-    cargarImagenMatriz(archBMP,matriz,inicioDatos,ancho,alto);
+    cargarImagenMatriz(archBMP, *matriz, inicioDatos, ancho, alto);
 
-    return matriz;
+    return TODO_OK;
+}
+
+void mostrarError(int codigo)
+{
+    if (codigo == TODO_OK)
+    {
+        return;
+    }
+
+    switch (codigo)
+    {
+        case ARGUMENTO_INVALIDO:
+            printf("Error: cantidad de parametros incorrecta.\n");
+            printf("Uso:\n");
+            printf("  bmpmanipuleitor.exe --filtro imagen.bmp\n");
+            printf("  bmpmanipuleitor.exe --concatenar-horizontal imagen1.bmp imagen2.bmp\n");
+            printf("  bmpmanipuleitor.exe --concatenar-vertical imagen1.bmp imagen2.bmp\n");
+            break;
+
+        case FILTRO_NO_RECONOCIDO:
+            printf("Error: filtro no reconocido.\n");
+            break;
+
+        case PORCENTAJE_INVALIDO:
+            printf("Error: el porcentaje debe estar entre 0 y 100.\n");
+            break;
+
+        case ERROR_EXTENSION:
+            printf("Error: el archivo debe tener extension .bmp\n");
+            break;
+
+        case ERROR_ABRIR_ARCHIVO:
+            printf("Error: no se pudo abrir o crear el archivo.\n");
+            break;
+
+        case ARCHIVO_NO_BMP:
+            printf("Error: el archivo no es un BMP valido (firma BM).\n");
+            break;
+
+        case CABECERA_INVALIDA:
+            printf("Error: cabecera BMP invalida.\n");
+            break;
+
+        case PROFUNDIDAD_INVALIDA:
+            printf("Error: el BMP debe ser de 24 bits.\n");
+            break;
+
+        case ERROR_LECTURA_ARCHIVO:
+            printf("Error: no se pudieron leer los datos del archivo.\n");
+            break;
+
+        case SIN_MEMORIA:
+            printf("Error: no hay memoria suficiente.\n");
+            break;
+
+        case ERROR_CARGA_IMAGEN:
+            printf("Error: no se pudo cargar la imagen BMP.\n");
+            break;
+
+        default:
+            printf("Error desconocido (codigo %d).\n", codigo);
+            break;
+    }
+}
+
+int salirConError(int codigo)
+{
+    mostrarError(codigo);
+    return codigo;
 }

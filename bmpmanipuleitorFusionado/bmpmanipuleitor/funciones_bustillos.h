@@ -18,7 +18,7 @@
 #define COMODIN_INCREMENTO_AZUL_VERDE 0.534
 #define COMODIN_INCREMENTO_AZUL_AZUL 0.131
 
-void tonalidadRoja(unsigned char ***matriz, int ancho, int alto);
+void tonalidadRoja(unsigned char ***matriz, int ancho, int alto, int *porcent);
 unsigned char ***concatenarHorizontal(unsigned char ***img1, int *ancho1, int *alto1, unsigned char ***img2, int ancho2, int alto2);
 unsigned char ***concatenarVertical(unsigned char ***img1, int *ancho1, int *alto1, unsigned char ***img2, int ancho2, int alto2);
 void comodin(unsigned char ***matriz, int ancho, int alto);
