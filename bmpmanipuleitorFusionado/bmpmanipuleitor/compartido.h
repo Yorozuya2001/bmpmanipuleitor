@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include "filtros.h"
 #include "estructuras.h"
-
-#define TODO_OK 0
-#define FALLA -2
+#include "errores.h"
 
 ///Definimos estos valores
 //#define 1 --negativo
@@ -16,7 +14,7 @@ int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *
 
 
 ///Funciones extras que se invocan desde la solucion
-FILE* abrirArchivo(char* nombreArchivo,const char* modoApertura);
+int abrirArchivo(char *nombreArchivo, const char *modoApertura, FILE **archivo);
 
 ///Funciones especificas para obtencion de datos del archivo
 int obtenerTamArchivo(FILE* archBMP, Imagen* reg);
@@ -50,8 +48,9 @@ int cargarImagenMatriz(FILE* archBMP,unsigned char*** matriz,int* inicioDatos,in
 unsigned char*** aplicarFiltro(unsigned char*** matriz,const char* filtro,int* ancho, int* alto,int* padding,unsigned char*** matriz2,int* anchoImg2, int* altoImg2);
 int generarArchSalida(char* nombreSalida,FILE* archBMP,FILE* archSalida,unsigned char*** matriz,int* padding,Imagen* reg);
 
-//Funcion para leer archivos BMP
-unsigned char ***leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDatos,int *ancho,int *alto,int *tamPunto,FILE *archBMP);
+//Funcion para leer archivos BMP (devuelve codigo; la matriz se escribe en *matriz)
+int leerBMP(const char *nombreArch, Imagen *regArch, int *inicioDatos, int *ancho, int *alto,
+            int *tamPunto, FILE *archBMP, unsigned char ****matriz);
 
 
 
