@@ -21,7 +21,7 @@ void tonalidadRoja(unsigned char ***matriz, int ancho, int alto, int *porcent)
                 matriz[i][j][2] = R
             */
 
-            incremento = matriz[i][j][2] + *porcent * matriz[i][j][2];
+            incremento = matriz[i][j][2] + ((float)*(porcent) / 100) * matriz[i][j][2];
 
             if (incremento > 255)
             {
