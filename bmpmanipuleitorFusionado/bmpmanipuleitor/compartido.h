@@ -1,7 +1,6 @@
 #ifndef COMPARTIDO_H_INCLUDED
 #define COMPARTIDO_H_INCLUDED
 #include <stdio.h>
-#include "filtros.h"
 #include "estructuras.h"
 
 #define TODO_OK                 0
@@ -17,12 +16,30 @@
 #define ERROR_LECTURA_ARCHIVO -10
 #define ERROR_CARGA_IMAGEN    -11
 
+#define EXTENSION_BMP ".bmp"
+
+/* Filtros sin parametro extra (o nombre exacto en argv) */
+#define FILTRO_NEGATIVO "--negativo"
+#define FILTRO_ESCALA_DE_GRISES "--escala-de-grises"
+#define FILTRO_ESPEJAR_HORIZONTAL "--espejar-horizontal"
+#define FILTRO_ESPEJAR_VERTICAL "--espejar-vertical"
+#define FILTRO_ROTAR_DERECHA "--rotar-derecha"
+#define FILTRO_ROTAR_IZQUIERDA "--rotar-izquierda"
+#define FILTRO_CONCATENAR_HORIZONTAL "--concatenar-horizontal"
+#define FILTRO_CONCATENAR_VERTICAL "--concatenar-vertical"
+#define FILTRO_COMODIN "--comodin"
+
+/* Filtros que pueden venir como --nombre=porcentaje */
+#define FILTRO_AUMENTAR_CONTRASTE "--aumentar-contraste"
+#define FILTRO_REDUCIR_CONTRASTE "--reducir-contraste"
+#define FILTRO_TONALIDAD_AZUL "--tonalidad-azul"
+#define FILTRO_TONALIDAD_VERDE "--tonalidad-verde"
+#define FILTRO_TONALIDAD_ROJA "--tonalidad-roja"
+#define FILTRO_RECORTAR "--recortar"
+#define FILTRO_ACHICAR "--achicar"
+
 void mostrarError(int codigo);
 int salirConError(int codigo);
-
-///Definimos estos valores
-//#define 1 --negativo
-
 
 ///Funcion de validacion de Parametros
 int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *esConcatenar);

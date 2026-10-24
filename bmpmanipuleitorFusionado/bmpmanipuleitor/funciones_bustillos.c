@@ -38,8 +38,10 @@ void comodin(unsigned char ***matriz, int ancho, int alto)
     int i,j;
     int incremento_rojo,incremento_azul,incremento_verde;
 
-    for(i=0;i<alto;i++){
-        for(j=0;j<ancho;j++) {
+    for(i=0; i<alto; i++)
+    {
+        for(j=0; j<ancho; j++)
+        {
 
             /*
                 matriz[i][j][0] = B
@@ -61,9 +63,9 @@ void comodin(unsigned char ***matriz, int ancho, int alto)
             matriz[i][j][1] = incremento_verde;
             matriz[i][j][2] = incremento_rojo;
         }
-        
+
     }
-    
+
 }
 
 

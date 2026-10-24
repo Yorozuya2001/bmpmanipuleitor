@@ -1,10 +1,9 @@
-
 #include "funciones_grupo.h"
 
 int solucion(int argc, char* argv[])
 {
-    
-    //-------------------------------------------------------------- 
+
+    //--------------------------------------------------------------
     // Variables
 
     FILE *archBMP = NULL;
@@ -77,7 +76,7 @@ int solucion(int argc, char* argv[])
         }
         return salirConError(codigo);
     }
-    
+
     //-----------------------------------------------------------------------------------
     // Comprobacion de esConcatenar y apertura de archivo2
 
