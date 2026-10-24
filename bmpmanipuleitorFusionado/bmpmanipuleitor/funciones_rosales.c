@@ -1,5 +1,6 @@
 #include "funciones_rosales.h"
 #include "funciones_viegas.h"
+
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
 {
    int i, j;
@@ -15,7 +16,7 @@ void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
                 matriz[i][j][2] = R
             */
 
-            incremento = matriz[i][j][0] + *porcent * matriz[i][j][0];
+            incremento = matriz[i][j][0] + ((float)*(porcent) / 100) * matriz[i][j][0];
 
             matriz[i][j][0] = incremento;
         }
@@ -37,7 +38,7 @@ void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent)
                 matriz[i][j][2] = R
             */
 
-            incremento = matriz[i][j][1] + *porcent * matriz[i][j][1];
+            incremento = matriz[i][j][1] + ((float)*(porcent) / 100) * matriz[i][j][1];
 
             matriz[i][j][1] = incremento;
         }
