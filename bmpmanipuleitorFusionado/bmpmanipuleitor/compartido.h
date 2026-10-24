@@ -41,6 +41,14 @@
 void mostrarError(int codigo);
 int salirConError(int codigo);
 
+///Definimos estos valores
+//#define 1 --negativo
+
+// Funciones para reservar memoria y liberar matrices
+void liberarMatriz(unsigned char ***matriz, int* ancho, int* alto);
+unsigned char ***reservarMatriz(int ancho, int alto);
+
+
 ///Funcion de validacion de Parametros
 int validarParametros(int* argc,const char* filtro,const char* pathImagen, int *esConcatenar);
 

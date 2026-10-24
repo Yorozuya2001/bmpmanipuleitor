@@ -1,4 +1,3 @@
-
 #ifndef ESTRUCTURAS_H_INCLUDED
 #define ESTRUCTURAS_H_INCLUDED
 
@@ -10,11 +9,11 @@
 
 //typedef struct
 //{
- //   unsigned int tamArchivo;
- //   unsigned int tamEncabezado;
- //   unsigned int ancho;
- //   unsigned int alto;
- //   unsigned short profundidad;
+//   unsigned int tamArchivo;
+//   unsigned int tamEncabezado;
+//   unsigned int ancho;
+//   unsigned int alto;
+//   unsigned short profundidad;
 //}t_metadata;
 
 typedef struct Imagen

@@ -1,25 +1,8 @@
-
 // #include "funciones_viegas.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define GRUPO "MATRICERO"
-
-void liberarMatriz(unsigned char ***matriz, int* ancho, int* alto)
-{
-    int i, j;
-
-    for (i = 0; i < *alto; i++)
-    {
-        for (j = 0; j < *ancho; j++)
-        {
-            free(matriz[i][j]);
-        }
-        free(matriz[i]);
-    }
-    free(matriz);
-}
-
 
 
 char* crearNombreSalida(char *salida, char *filtro, char *entrada)
@@ -45,37 +28,6 @@ char* crearNombreSalida(char *salida, char *filtro, char *entrada)
 
     return salida;
 }
-
-
-
-unsigned char ***reservarMatriz(int ancho, int alto)
-{
-    unsigned char ***matriz;
-    int i, j;
-
-    matriz = malloc(alto * sizeof(unsigned char **));
-
-    if (matriz == NULL)
-        return NULL;
-
-    for (i = 0; i < alto; i++)
-    {
-        matriz[i] = malloc(ancho * sizeof(unsigned char *));
-
-        if (matriz[i] == NULL)
-            return NULL;
-
-        for (j = 0; j < ancho; j++)
-        {
-            matriz[i][j] = malloc(3 * sizeof(unsigned char));
-
-            if (matriz[i][j] == NULL)
-                return NULL;
-        }
-    }
-    return matriz;
-}
-
 
 
 void negativo(unsigned char ***matriz, int ancho, int alto)

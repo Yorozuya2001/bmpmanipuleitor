@@ -1,5 +1,5 @@
-#include "funciones_viegas.h"
 #include <stddef.h>
+#include "compartido.h"
 
 void modificarContraste(unsigned char ***matriz, int ancho, int alto,int porcentaje)
 {

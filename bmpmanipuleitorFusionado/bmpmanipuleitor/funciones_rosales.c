@@ -1,10 +1,10 @@
 #include "funciones_rosales.h"
-#include "funciones_viegas.h"
+#include "compartido.h"
 
 void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
 {
-   int i, j;
-   int incremento;
+    int i, j;
+    int incremento;
 
     for (i = 0; i < alto; i++)
     {
@@ -18,6 +18,11 @@ void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
 
             incremento = matriz[i][j][0] + ((float)*(porcent) / 100) * matriz[i][j][0];
 
+            if (incremento > 255)
+            {
+                incremento = 255;
+            }
+
             matriz[i][j][0] = incremento;
         }
     }
@@ -25,8 +30,8 @@ void tonalidadAzul(unsigned char ***matriz, int ancho, int alto,int* porcent)
 
 void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent)
 {
-  int i, j;
-   int incremento;
+    int i, j;
+    int incremento;
 
     for (i = 0; i < alto; i++)
     {
@@ -39,6 +44,11 @@ void tonalidadVerde(unsigned char ***matriz,int ancho,int alto,int* porcent)
             */
 
             incremento = matriz[i][j][1] + ((float)*(porcent) / 100) * matriz[i][j][1];
+
+            if (incremento > 255)
+            {
+                incremento = 255;
+            }
 
             matriz[i][j][1] = incremento;
         }
@@ -81,15 +91,15 @@ unsigned char ***recortarImagen(unsigned char ***matriz,int* ancho,int* alto,int
 }
 
 ///Deberá reescribir todos los pixeles, para que se ubiquen dentro de un marco determinado
-  ///Para ello, deberiamos "redimensionar" la matriz donde guardamos los datos
+///Para ello, deberiamos "redimensionar" la matriz donde guardamos los datos
 
 unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,int* porcent)
 {
 
-   int anchoOrig = *ancho;
-   int altoOrig  = *alto;
-   int anchoRed = anchoOrig * (*porcent) / 100;
-   int altoRed  = altoOrig  * (*porcent) / 100;
+    int anchoOrig = *ancho;
+    int altoOrig  = *alto;
+    int anchoRed = anchoOrig * (*porcent) / 100;
+    int altoRed  = altoOrig  * (*porcent) / 100;
 
     if (anchoRed < 1)
         anchoRed = 1;
@@ -101,8 +111,10 @@ unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,in
     float pasoX = (float)anchoOrig / (float)anchoRed;
     float pasoY = (float)altoOrig  / (float)altoRed;
 
-    for (int i = 0; i < altoRed; i++) {
-        for (int j = 0; j < anchoRed; j++) {
+    for (int i = 0; i < altoRed; i++)
+    {
+        for (int j = 0; j < anchoRed; j++)
+        {
             int io = (int)(i * pasoY);
             int jo = (int)(j * pasoX);
             nueva_matriz[i][j][0] = matriz[io][jo][0];
@@ -111,7 +123,7 @@ unsigned char *** achicarImagen(unsigned char ***matriz,int* ancho, int* alto,in
         }
     }
 
-     liberarMatriz(matriz,&anchoOrig,&altoOrig);
+    liberarMatriz(matriz,&anchoOrig,&altoOrig);
 
     *ancho = anchoRed;
     *alto  = altoRed;

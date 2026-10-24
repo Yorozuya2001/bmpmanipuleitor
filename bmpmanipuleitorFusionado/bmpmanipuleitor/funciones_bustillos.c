@@ -3,7 +3,7 @@
 
 #include "funciones_bustillos.h"
 #include "estructuras.h"
-#include "funciones_viegas.h"
+#include "compartido.h"
 
 
 void tonalidadRoja(unsigned char ***matriz, int ancho, int alto, int *porcent)
